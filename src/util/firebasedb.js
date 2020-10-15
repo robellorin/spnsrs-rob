@@ -7,17 +7,17 @@ export const createData = (collection, data) => {
     .then(() => {
       console.log("Document successfully written!");
     })
-    .catch((error) => {
+    .catch(error => {
       console.error("Error writing document: ", error);
     });
-}
+};
 
-export const readData = (collection) => {
+export const readData = collection => {
   let rows = [];
   db.collection(collection)
     .get()
-    .then((querySnapshot) => {
-      querySnapshot.forEach((doc) => {
+    .then(querySnapshot => {
+      querySnapshot.forEach(doc => {
         rows.push({
           id: doc.id,
           ...doc.data()
@@ -26,10 +26,10 @@ export const readData = (collection) => {
       });
       return rows;
     })
-    .catch((error) => {
+    .catch(error => {
       console.log("Error getting documents: ", error);
     });
-}
+};
 
 export const updateData = (collection, data) => {
   db.collection(collection)
@@ -38,10 +38,10 @@ export const updateData = (collection, data) => {
     .then(() => {
       console.log("Document successfully updated!");
     })
-    .catch((error) => {
+    .catch(error => {
       console.error("Error updating document: ", error);
     });
-}
+};
 
 export const deleteData = (collection, id) => {
   db.collection(collection)
@@ -50,7 +50,7 @@ export const deleteData = (collection, id) => {
     .then(() => {
       console.log("Document successfully deleted!");
     })
-    .catch((error) => {
+    .catch(error => {
       console.error("Error removing document: ", error);
     });
-}
+};
