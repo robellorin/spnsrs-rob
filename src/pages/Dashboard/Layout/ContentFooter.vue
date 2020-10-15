@@ -4,37 +4,20 @@
       <nav>
         <ul>
           <li>
-            <router-link
-              v-if="$route.meta.rtlActive"
-              :to="{ path: 'https://www.creative-tim.com' }"
-              >منزل</router-link
-            >
-            <a v-else href="https://www.creative-tim.com">Creative Tim</a>
+            <a href="https://www.creative-tim.com">Creative Tim</a>
           </li>
           <li>
-            <a v-if="$route.meta.rtlActive" href="http://blog.creative-tim.com">
-              شركة
-            </a>
-            <a v-else href="https://creative-tim.com/presentation">
+            <a href="https://creative-tim.com/presentation">
               About Us
             </a>
           </li>
           <li>
-            <a v-if="$route.meta.rtlActive" href="http://blog.creative-tim.com">
-              محفظة
-            </a>
-            <a v-else href="http://blog.creative-tim.com">
+            <a href="http://blog.creative-tim.com">
               Blog
             </a>
           </li>
           <li>
-            <a
-              v-if="$route.meta.rtlActive"
-              href="https://www.creative-tim.com/license"
-            >
-              بلوق
-            </a>
-            <a v-else href="https://www.creative-tim.com/license">
+            <a href="https://www.creative-tim.com/license">
               Licenses
             </a>
           </li>

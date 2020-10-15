@@ -10,11 +10,7 @@
         @click.stop="toggleMenu"
         @click.capture="clicked"
       >
-        <span v-if="$route.meta.rtlActive">
-          {{ rtlTitle }}
-          <b class="caret"></b>
-        </span>
-        <span v-else>
+        <span>
           {{ title }}
           <b class="caret"></b>
         </span>
@@ -25,31 +21,19 @@
           <ul class="nav">
             <slot>
               <li>
-                <a v-if="$route.meta.rtlActive" href="#vue">
-                  <span class="sidebar-mini">مع</span>
-                  <span class="sidebar-normal">ملف</span>
-                </a>
-                <a v-else href="#vue">
+                <a href="#vue">
                   <span class="sidebar-mini">MP</span>
                   <span class="sidebar-normal">My Profile</span>
                 </a>
               </li>
               <li>
-                <a v-if="$route.meta.rtlActive" href="#vue">
-                  <span class="sidebar-mini">هوع</span>
-                  <span class="sidebar-normal">تعديل الملف الشخصي</span>
-                </a>
-                <a v-else href="#vue">
+                <a href="#vue">
                   <span class="sidebar-mini">EP</span>
                   <span class="sidebar-normal">Edit Profile</span>
                 </a>
               </li>
               <li>
-                <a v-if="$route.meta.rtlActive" href="#vue">
-                  <span class="sidebar-mini">و</span>
-                  <span class="sidebar-normal">إعدادات</span>
-                </a>
-                <a v-else href="#vue">
+                <a href="#vue">
                   <span class="sidebar-mini">S</span>
                   <span class="sidebar-normal">Settings</span>
                 </a>
@@ -72,10 +56,6 @@ export default {
     title: {
       type: String,
       default: "Tania Andrew"
-    },
-    rtlTitle: {
-      type: String,
-      default: "تانيا أندرو"
     },
     avatar: {
       type: String,

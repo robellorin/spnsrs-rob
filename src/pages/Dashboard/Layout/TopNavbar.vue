@@ -29,8 +29,7 @@
               :md-options="employees"
               :md-open-on-focus="false"
             >
-              <label v-if="$route.meta.rtlActive">بحث...</label>
-              <label v-else>Search...</label>
+              <label>Search...</label>
             </md-autocomplete>
           </div>
           <md-list>

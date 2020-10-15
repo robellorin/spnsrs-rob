@@ -23,9 +23,6 @@
             :link="{ name: 'Pricing', path: '/pricing' }"
           ></sidebar-item>
           <sidebar-item
-            :link="{ name: 'RTL Support', path: '/pages/rtl' }"
-          ></sidebar-item>
-          <sidebar-item
             :link="{ name: 'Timeline', path: '/pages/timeline' }"
           ></sidebar-item>
           <sidebar-item
