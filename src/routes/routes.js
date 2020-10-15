@@ -8,7 +8,6 @@ import Dashboard from "@/pages/Dashboard/Dashboard.vue";
 import User from "@/pages/Dashboard/Pages/UserProfile.vue";
 import Pricing from "@/pages/Dashboard/Pages/Pricing.vue";
 import TimeLine from "@/pages/Dashboard/Pages/TimeLinePage.vue";
-import RtlSupport from "@/pages/Dashboard/Pages/RtlSupport.vue";
 import Login from "@/pages/Dashboard/Pages/Login.vue";
 import Register from "@/pages/Dashboard/Pages/Register.vue";
 import Lock from "@/pages/Dashboard/Pages/Lock.vue";
@@ -184,14 +183,6 @@ let pagesMenu = {
       path: "timeline",
       name: "Timeline Page",
       components: { default: TimeLine }
-    },
-    {
-      path: "rtl",
-      name: "وحة القيادة",
-      meta: {
-        rtlActive: true
-      },
-      components: { default: RtlSupport }
     }
   ]
 };
