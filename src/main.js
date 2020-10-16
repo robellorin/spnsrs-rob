@@ -42,7 +42,7 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  if (to.name !== "Login") {
+  if (to.name !== "Login" && to.name !== "Register") {
     firebase.auth().onAuthStateChanged(function(user) {
       if (user) {
         next();
@@ -53,7 +53,11 @@ router.beforeEach((to, from, next) => {
   } else {
     firebase.auth().onAuthStateChanged(function(user) {
       if (user) {
-        next({ name: "Dashboard" });
+        if (to.name === "Login") {
+          next({ name: "Dashboard" });
+        } else {
+          next({ name: "User Page" });
+        }
       } else {
         next();
       }
