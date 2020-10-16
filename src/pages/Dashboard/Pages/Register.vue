@@ -1,6 +1,6 @@
 <template>
   <div class="md-layout text-center">
-    <div class="md-layout-item md-size-33 md-medium-size-50 md-small-size-70 md-xsmall-size-100">
+    <div class="md-layout-item md-size-50 md-medium-size-50 md-small-size-70 md-xsmall-size-100">
       <ValidationObserver v-slot="{ handleSubmit }">
         <form @submit.prevent="handleSubmit(submit)">
           <signup-card>
@@ -78,11 +78,9 @@
                   <i class="fab fa-google"></i>
                 </md-button>
               </div>
-              <div class="social-line text-center">
-                <md-checkbox v-model="boolean"
-                  >I agree to the <a>terms and conditions</a>.</md-checkbox
-                >
-              </div>
+              <md-content class="md-accent" :class="[{ 'md-error': signupError }]">
+                <p>{{signupError}}</p>
+              </md-content>
               <div class="button-container">
                 <md-button type="submit" class="md-success md-round mt-4" slot="footer"
                   >Get Started</md-button
@@ -97,6 +95,7 @@
 </template>
 <script>
 import { SlideYDownTransition } from "vue2-transitions";
+import firebase from "@/utils/firebase/firebaseInit.js";
 import { SignupCard } from "@/components";
 export default {
   components: {
@@ -105,16 +104,30 @@ export default {
   },
   methods: {
     submit() {
-      alert("Form has been submitted!");
+      firebase
+        .auth()
+        .createUserWithEmailAndPassword(this.email, this.password)
+        .then(data => {
+          this.signupError = null
+          // data.user
+          //   .updateProfile({
+          //     displayName: this.form.name
+          //   })
+          //   .then(() => {});
+        })
+        .catch(err => {
+          this.signupError = err.message;
+        });
     }
   },
   data() {
     return {
       firstname: null,
       boolean: false,
-      email: null,
-      password: null,
-      confirmation: null,
+      email: "test@email.com",
+      password: "123456",
+      confirmation: "123456",
+      signupError: null,
       contentLeft: [
         {
           colorIcon: "icon-success",
@@ -168,4 +181,12 @@ export default {
   }
 };
 </script>
-<style></style>
+<style lang="scss" scoped>
+.no-boder {
+  border: none;
+}
+
+.text-center {
+  justify-content: center !important;
+}
+</style>

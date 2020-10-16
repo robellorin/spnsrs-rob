@@ -1,8 +1,9 @@
 import firebase from "./firebaseInit";
-const db = firebase.firestore();
+export const firebaseDB = firebase.firestore();
 
 export const createData = (collection, data) => {
-  db.collection(collection)
+  firebaseDB
+    .collection(collection)
     .add(data)
     .then(() => {
       console.log("Document successfully written!");
@@ -14,7 +15,8 @@ export const createData = (collection, data) => {
 
 export const readData = collection => {
   let rows = [];
-  db.collection(collection)
+  firebaseDB
+    .collection(collection)
     .get()
     .then(querySnapshot => {
       querySnapshot.forEach(doc => {
@@ -32,7 +34,8 @@ export const readData = collection => {
 };
 
 export const updateData = (collection, data) => {
-  db.collection(collection)
+  firebaseDB
+    .collection(collection)
     .doc(data.id)
     .update(data)
     .then(() => {
@@ -44,7 +47,8 @@ export const updateData = (collection, data) => {
 };
 
 export const deleteData = (collection, id) => {
-  db.collection(collection)
+  firebaseDB
+    .collection(collection)
     .doc(id)
     .delete()
     .then(() => {

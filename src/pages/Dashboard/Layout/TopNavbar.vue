@@ -70,6 +70,10 @@
               <i class="material-icons">person</i>
               <p class="hidden-lg hidden-md">Profile</p>
             </md-list-item>
+            <md-list-item @click="signout">
+              <i class="material-icons">power_settings_new</i>
+              <p class="hidden-lg hidden-md">SignOut</p>
+            </md-list-item>
           </md-list>
         </div>
       </div>
@@ -78,6 +82,7 @@
 </template>
 
 <script>
+import firebase from "@/utils/firebase/firebaseInit.js";
 export default {
   data() {
     return {
@@ -102,6 +107,14 @@ export default {
       if (this.$sidebar) {
         this.$sidebar.toggleMinimize();
       }
+    },
+    signout() {
+      firebase
+        .auth()
+        .signOut()
+        .then(() => {
+          console.log("Loged Out");
+        });
     }
   }
 };

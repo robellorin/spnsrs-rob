@@ -22,6 +22,8 @@ import Chartist from "chartist";
 // router setup
 import routes from "./routes/routes";
 
+import firebase from "@/utils/firebase/firebaseInit.js";
+
 // plugin setup
 Vue.use(VueRouter);
 Vue.use(DashboardPlugin);
@@ -37,6 +39,26 @@ const router = new VueRouter({
     }
   },
   linkExactActiveClass: "nav-item active"
+});
+
+router.beforeEach((to, from, next) => {
+  if (to.name !== "Login") {
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        next();
+      } else {
+        next({ name: "Login" });
+      }
+    });
+  } else {
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        next({ name: "Dashboard" });
+      } else {
+        next();
+      }
+    });
+  }
 });
 
 // global library setup
