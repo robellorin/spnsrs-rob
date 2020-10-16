@@ -82,7 +82,6 @@
 </template>
 
 <script>
-import firebase from "@/utils/firebase/firebaseInit.js";
 export default {
   data() {
     return {
@@ -109,7 +108,7 @@ export default {
       }
     },
     signout() {
-      firebase
+      this.$firebaseGlob
         .auth()
         .signOut()
         .then(() => {

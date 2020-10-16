@@ -205,6 +205,7 @@ export default {
     reinitScrollbar();
   },
   mounted() {
+    console.log(this.$firebaseGlob.auth().currentUser);
     reinitScrollbar();
   },
   watch: {

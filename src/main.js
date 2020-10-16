@@ -67,6 +67,7 @@ router.beforeEach((to, from, next) => {
 
 // global library setup
 Vue.prototype.$Chartist = Chartist;
+Vue.prototype.$firebaseGlob = firebase;
 
 /* eslint-disable no-new */
 new Vue({

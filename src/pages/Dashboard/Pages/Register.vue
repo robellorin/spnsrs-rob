@@ -95,7 +95,6 @@
 </template>
 <script>
 import { SlideYDownTransition } from "vue2-transitions";
-import firebase from "@/utils/firebase/firebaseInit.js";
 import { SignupCard } from "@/components";
 export default {
   components: {
@@ -104,16 +103,16 @@ export default {
   },
   methods: {
     submit() {
-      firebase
+      this.$firebaseGlob
         .auth()
         .createUserWithEmailAndPassword(this.email, this.password)
         .then(data => {
           this.signupError = null
-          // data.user
-          //   .updateProfile({
-          //     displayName: this.form.name
-          //   })
-          //   .then(() => {});
+          data.user
+            .updateProfile({
+              displayName: this.email
+            })
+            .then(() => {});
         })
         .catch(err => {
           this.signupError = err.message;

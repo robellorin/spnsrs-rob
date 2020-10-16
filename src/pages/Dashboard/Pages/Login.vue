@@ -71,7 +71,6 @@
 </template>
 <script>
 import { LoginCard } from "@/components";
-import firebase from "@/utils/firebase/firebaseInit.js";
 export default {
   components: {
     LoginCard
@@ -86,7 +85,7 @@ export default {
   },
   methods: {
     loginClick() {
-      firebase
+      this.$firebaseGlob
         .auth()
         .signInWithEmailAndPassword(this.email, this.password)
         .then(data => {
