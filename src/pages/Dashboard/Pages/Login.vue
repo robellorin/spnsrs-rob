@@ -36,7 +36,11 @@
           <label>Password...</label>
           <md-input v-model="password"></md-input>
         </md-field>
-        <md-button slot="footer" class="md-simple md-success md-lg">
+        <md-button
+          slot="footer"
+          class="md-simple md-success md-lg"
+          @click="loginClick"
+        >
           Let's go
         </md-button>
       </login-card>
@@ -55,6 +59,11 @@ export default {
       email: null,
       password: null
     };
+  },
+  methods: {
+    loginClick() {
+      this.$router.push({ name: "Dashboard" });
+    }
   }
 };
 </script>

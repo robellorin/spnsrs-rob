@@ -3,7 +3,7 @@
     <md-toolbar md-elevation="0" class="md-transparent md-toolbar-absolute">
       <div class="md-toolbar-row md-offset">
         <div class="md-toolbar-section-start">
-          <h3 class="md-title">{{ $route.name }}</h3>
+          <h3 class="md-title">Logo here</h3>
         </div>
         <div class="md-toolbar-section-end">
           <md-button
@@ -21,7 +21,7 @@
             :class="{ 'off-canvas-sidebar': responsive }"
           >
             <md-list>
-              <md-list-item href="/">
+              <md-list-item href="#/dashboard">
                 <md-icon>dashboard</md-icon>
                 Dashboard
               </md-list-item>

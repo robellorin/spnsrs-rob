@@ -218,8 +218,8 @@ let authPages = {
 const routes = [
   {
     path: "/",
-    redirect: "/dashboard",
-    name: "Home"
+    redirect: "/login",
+    name: "Login"
   },
   componentsMenu,
   formsMenu,

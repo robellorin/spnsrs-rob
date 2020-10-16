@@ -1,68 +1,112 @@
 <template>
-  <div class="md-layout">
-    <div class="md-layout-item">
-      <signup-card>
-        <h2 class="title text-center" slot="title">Register</h2>
-        <div
-          class="md-layout-item md-size-50 md-medium-size-50 md-small-size-100 ml-auto"
-          slot="content-left"
-        >
-          <div
-            class="info info-horizontal"
-            v-for="item in contentLeft"
-            :key="item.title"
-          >
-            <div :class="`icon ${item.colorIcon}`">
-              <md-icon>{{ item.icon }}</md-icon>
-            </div>
-            <div class="description">
-              <h4 class="info-title">{{ item.title }}</h4>
-              <p class="description">
-                {{ item.description }}
-              </p>
-            </div>
-          </div>
-        </div>
-        <div
-          class="md-layout-item md-size-50 md-medium-size-50 md-small-size-100 mr-auto"
-          slot="content-right"
-        >
-          <div class="social-line text-center">
-            <md-button class="md-just-icon md-round md-twitter">
-              <i class="fab fa-twitter"></i>
-            </md-button>
-            <md-button class="md-just-icon md-round md-facebook">
-              <i class="fab fa-facebook-f"></i>
-            </md-button>
-            <h4 class="mt-3">or be classical</h4>
-          </div>
-          <md-field
-            class="md-form-group"
-            v-for="item in inputs"
-            :key="item.name"
-          >
-            <md-icon>{{ item.icon }}</md-icon>
-            <label>{{ item.name }}</label>
-            <md-input :v-model="item.nameAttr" :type="item.type"></md-input>
-          </md-field>
-          <md-checkbox v-model="boolean"
-            >I agree to the <a>terms and conditions</a>.</md-checkbox
-          >
-          <div class="button-container">
-            <md-button href class="md-success md-round mt-4" slot="footer"
-              >Get Started</md-button
+  <div class="md-layout text-center">
+    <div class="md-layout-item md-size-33 md-medium-size-50 md-small-size-70 md-xsmall-size-100">
+      <ValidationObserver v-slot="{ handleSubmit }">
+        <form @submit.prevent="handleSubmit(submit)">
+          <signup-card>
+            <h2 class="title text-center" slot="title">Register</h2>
+            <div
+              class="md-layout-item md-size-100 md-medium-size-100 md-small-size-100 mr-auto"
+              slot="content-right"
             >
-          </div>
-        </div>
-      </signup-card>
+              
+              <ValidationProvider
+                name="email"
+                rules="required|email"
+                v-slot="{ passed, failed }"
+              >
+                <md-field class="md-form-group" :class="[{ 'md-error': failed }, { 'md-valid': passed }]">
+                  <md-icon>email</md-icon>
+                  <label>Email Adress</label>
+                  <md-input v-model="email" type="email"> </md-input>
+
+                  <slide-y-down-transition>
+                    <md-icon class="error" v-show="failed">close</md-icon>
+                  </slide-y-down-transition>
+                  <slide-y-down-transition>
+                    <md-icon class="success" v-show="passed">done</md-icon>
+                  </slide-y-down-transition>
+                </md-field>
+              </ValidationProvider>
+
+              <ValidationProvider
+                name="password"
+                rules="required|confirmed:confirmation"
+                v-slot="{ passed, failed }"
+              >
+                <md-field class="md-form-group" :class="[{ 'md-error': failed }, { 'md-valid': passed }]">
+                  <md-icon>lock_outline</md-icon>
+                  <label>Password</label>
+                  <md-input v-model="password" type="password"> </md-input>
+
+                  <slide-y-down-transition>
+                    <md-icon class="error" v-show="failed">close</md-icon>
+                  </slide-y-down-transition>
+                  <slide-y-down-transition>
+                    <md-icon class="success" v-show="passed">done</md-icon>
+                  </slide-y-down-transition>
+                </md-field>
+              </ValidationProvider>
+
+              <ValidationProvider
+                vid="confirmation"
+                rules="required"
+                v-slot="{ passed, failed }"
+              >
+                <md-field class="md-form-group" :class="[{ 'md-error': failed }, { 'md-valid': passed }]">
+                  <md-icon></md-icon>
+                  <label>Confirm password</label>
+                  <md-input v-model="confirmation" type="password"> </md-input>
+
+                  <slide-y-down-transition>
+                    <md-icon class="error" v-show="failed">close</md-icon>
+                  </slide-y-down-transition>
+                  <slide-y-down-transition>
+                    <md-icon class="success" v-show="passed">done</md-icon>
+                  </slide-y-down-transition>
+                </md-field>
+              </ValidationProvider>
+              
+              <div class="social-line text-center">
+                <md-button class="md-just-icon md-round md-twitter">
+                  <i class="fab fa-twitter"></i>
+                </md-button>
+                <md-button class="md-just-icon md-round md-facebook">
+                  <i class="fab fa-facebook-f"></i>
+                </md-button>
+                <md-button class="md-just-icon md-round md-google">
+                  <i class="fab fa-google"></i>
+                </md-button>
+              </div>
+              <div class="social-line text-center">
+                <md-checkbox v-model="boolean"
+                  >I agree to the <a>terms and conditions</a>.</md-checkbox
+                >
+              </div>
+              <div class="button-container">
+                <md-button type="submit" class="md-success md-round mt-4" slot="footer"
+                  >Get Started</md-button
+                >
+              </div>
+            </div>
+          </signup-card>
+        </form>
+      </ValidationObserver>
     </div>
   </div>
 </template>
 <script>
+import { SlideYDownTransition } from "vue2-transitions";
 import { SignupCard } from "@/components";
 export default {
   components: {
-    SignupCard
+    SignupCard,
+    SlideYDownTransition
+  },
+  methods: {
+    submit() {
+      alert("Form has been submitted!");
+    }
   },
   data() {
     return {
@@ -70,6 +114,7 @@ export default {
       boolean: false,
       email: null,
       password: null,
+      confirmation: null,
       contentLeft: [
         {
           colorIcon: "icon-success",
@@ -97,24 +142,26 @@ export default {
       ],
       inputs: [
         {
-          icon: "face",
-          name: "First Name...",
-          nameAttr: "firstname",
-          type: "text"
-        },
-
-        {
           icon: "email",
-          name: "Email...",
+          name: "Email",
           nameAttr: "email",
-          type: "email"
+          type: "email",
+          rule: "required|email"
         },
 
         {
           icon: "lock_outline",
-          name: "Password..",
+          name: "Password",
           nameAttr: "password",
-          type: "password"
+          type: "password",
+          rule: "required|confirmed:confirmation|min:5"
+        },
+
+        {
+          name: "Confirm password",
+          nameAttr: "confirmpassword",
+          type: "password",
+          rule: "confirmed:password"
         }
       ]
     };

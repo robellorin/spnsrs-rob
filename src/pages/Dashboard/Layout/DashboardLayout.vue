@@ -1,10 +1,5 @@
 <template>
-  <div
-    class="wrapper"
-    :class="[
-      { 'nav-open': $sidebar.showSidebar }
-    ]"
-  >
+  <div class="wrapper" :class="[{ 'nav-open': $sidebar.showSidebar }]">
     <notifications></notifications>
     <side-bar
       :active-color="sidebarBackground"
@@ -20,16 +15,16 @@
         </sidebar-item>
         <sidebar-item :link="{ name: 'Pages', icon: 'image' }">
           <sidebar-item
-            :link="{ name: 'Pricing', path: '/pricing' }"
-          ></sidebar-item>
-          <sidebar-item
-            :link="{ name: 'Timeline', path: '/pages/timeline' }"
-          ></sidebar-item>
-          <sidebar-item
             :link="{ name: 'Login', path: '/login' }"
           ></sidebar-item>
           <sidebar-item
             :link="{ name: 'Register', path: '/register' }"
+          ></sidebar-item>
+          <sidebar-item
+            :link="{ name: 'Pricing', path: '/pricing' }"
+          ></sidebar-item>
+          <sidebar-item
+            :link="{ name: 'Timeline', path: '/pages/timeline' }"
           ></sidebar-item>
           <sidebar-item
             :link="{ name: 'Lock Screen', path: '/lock' }"

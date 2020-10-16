@@ -8,18 +8,16 @@
   >
     <div class="logo">
       <a
-        href="https://www.creative-tim.com"
+        href="/"
         class="simple-text logo-mini"
-        target="_blank"
       >
         <div class="logo-img">
           <img :src="logo" />
         </div>
       </a>
       <a
-        href="https://www.creative-tim.com"
+        href="/"
         class="simple-text logo-normal"
-        target="_blank"
       >
         <template>{{ title }}</template>
       </a>
@@ -66,7 +64,7 @@ export default {
   props: {
     title: {
       type: String,
-      default: "Vue MD PRO"
+      default: "SPNSRS.COM"
     },
     activeColor: {
       type: String,
