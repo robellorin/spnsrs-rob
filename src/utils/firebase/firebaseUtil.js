@@ -3,10 +3,10 @@ const firebaseDB = firebase.firestore();
 const firebaseUtilFuncs = {
   async createData(collection, data) {
     let docRef = await firebaseDB.collection(collection).add(data);
-    return docRef.id;
+    return docRef;
   },
 
-  readData(collection) {
+  async readData(collection) {
     let rows = [];
     firebaseDB
       .collection(collection)

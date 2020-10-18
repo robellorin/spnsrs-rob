@@ -12,6 +12,7 @@
 // * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 import Vue from "vue";
+import Vuex from "vuex";
 import VueRouter from "vue-router";
 import DashboardPlugin from "./material-dashboard";
 
@@ -21,11 +22,13 @@ import Chartist from "chartist";
 
 // router setup
 import routes from "./routes/routes";
+import store from "./store";
 
 import firebase from "@/utils/firebase/firebaseInit.js";
 
 // plugin setup
 Vue.use(VueRouter);
+Vue.use(Vuex);
 Vue.use(DashboardPlugin);
 
 // configure router
@@ -74,5 +77,6 @@ Vue.prototype.$firebaseGlobDB = firebase.firestore();
 new Vue({
   el: "#app",
   render: h => h(App),
-  router
+  router,
+  store
 });

@@ -108,19 +108,17 @@ export default {
       this.$firebaseGlob
         .auth()
         .createUserWithEmailAndPassword(this.email, this.password)
-        .then(data => {
+        .then(async data => {
           localStorage.setItem("isLoggedIn", true);
-          firebaseUtilFuncs.createData('users', {email: data.user.email})
+          var newUser = await firebaseUtilFuncs.createData('users', {email: data.user.email})
+          this.$store.commit('auth/setAuthUser', {
+            id: newUser.id,
+            email: data.user.email
+          })
           this.$router.replace({ name: "Dashboard" });
-          data.user
-            .updateProfile({
-              displayName: this.email
-            })
-            .then(() => {
-              console.log("3")
-            });
         })
         .catch(err => {
+          console.log(err)
           this.signupError = err.message;
         });
     },
@@ -131,27 +129,25 @@ export default {
         var user = result.user;
         const usersRef = this.$firebaseGlobDB.collection('users');
         const snapshot = await usersRef.where('email', '==', user.email).get();
-        var userId = null;
         if (snapshot.empty) {
-          userId = await firebaseUtilFuncs.createData('users', {email: user.email})
+          var newUser = await firebaseUtilFuncs.createData('users', {email: user.email})
+          this.$store.commit('auth/setAuthUser', {
+            id: newUser.id,
+            email: user.email
+          })
         } else {
+          var user = null;        
           snapshot.forEach(doc => {
-            userId = doc.id;
+            this.$store.commit('auth/setAuthUser', {
+              id: doc.id,
+              ...doc.data()
+            })
           })
         }
-        console.log("userId:", userId)
         this.$router.replace({ name: "Dashboard" });
       }).catch(function(error) {
+        console.log("social login failed")
         console.log(error)
-        console.log("failed")
-        // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        // The email of the user's account used.
-        var email = error.email;
-        // The firebase.auth.AuthCredential type that was used.
-        var credential = error.credential;
-        // ...
       });
     }
   },

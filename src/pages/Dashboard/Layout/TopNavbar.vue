@@ -113,6 +113,7 @@ export default {
         .signOut()
         .then(() => {
           localStorage.setItem("isLoggedIn", false);
+          this.$store.commit('auth/clearAuthUser');
           this.$router.replace({ name: "Login" });
         });
     }
