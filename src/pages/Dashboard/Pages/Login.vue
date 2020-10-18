@@ -89,9 +89,11 @@ export default {
         .auth()
         .signInWithEmailAndPassword(this.email, this.password)
         .then(data => {
-          // this.$router.replace({ name: "Dashboard" });
+          localStorage.setItem("isLoggedIn", true);
+          this.$router.replace({ name: "Dashboard" });
         })
         .catch(err => {
+          localStorage.setItem("isLoggedIn", false);
           this.signinError = err.message;
         });
     }

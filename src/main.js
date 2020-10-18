@@ -41,33 +41,38 @@ const router = new VueRouter({
   linkExactActiveClass: "nav-item active"
 });
 
-router.beforeEach((to, from, next) => {
-  if (to.name !== "Login" && to.name !== "Register") {
-    firebase.auth().onAuthStateChanged(function(user) {
-      if (user) {
-        next();
-      } else {
-        next({ name: "Login" });
-      }
-    });
+firebase.auth().onAuthStateChanged(function(user) {
+  if (user) {
+    localStorage.setItem("isLoggedIn", true);
+    console.log("Logged In");
   } else {
-    firebase.auth().onAuthStateChanged(function(user) {
-      if (user) {
-        if (to.name === "Login") {
-          next({ name: "Dashboard" });
-        } else {
-          next({ name: "User Page" });
-        }
-      } else {
-        next();
-      }
-    });
+    localStorage.setItem("isLoggedIn", false);
+    console.log("Logged Out");
+  }
+});
+
+router.beforeEach((to, from, next) => {
+  console.log(localStorage.getItem("isLoggedIn"));
+  console.log(localStorage.getItem("isLoggedIn") === "true");
+  if (localStorage.getItem("isLoggedIn") === "true") {
+    if (to.name === "Login" || to.name == "Register") {
+      next({ name: "Dashboard" });
+    } else {
+      next();
+    }
+  } else {
+    if (to.name === "Login" || to.name == "Register") {
+      next();
+    } else {
+      next({ name: "Login" });
+    }
   }
 });
 
 // global library setup
 Vue.prototype.$Chartist = Chartist;
 Vue.prototype.$firebaseGlob = firebase;
+Vue.prototype.$firebaseGlobDB = firebase.firestore();
 
 /* eslint-disable no-new */
 new Vue({
