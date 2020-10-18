@@ -44,16 +44,12 @@ const router = new VueRouter({
 firebase.auth().onAuthStateChanged(function(user) {
   if (user) {
     localStorage.setItem("isLoggedIn", true);
-    console.log("Logged In");
   } else {
     localStorage.setItem("isLoggedIn", false);
-    console.log("Logged Out");
   }
 });
 
 router.beforeEach((to, from, next) => {
-  console.log(localStorage.getItem("isLoggedIn"));
-  console.log(localStorage.getItem("isLoggedIn") === "true");
   if (localStorage.getItem("isLoggedIn") === "true") {
     if (to.name === "Login" || to.name == "Register") {
       next({ name: "Dashboard" });
