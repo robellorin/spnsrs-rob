@@ -74,7 +74,7 @@
                 <md-button class="md-just-icon md-round md-facebook">
                   <i class="fab fa-facebook-f"></i>
                 </md-button>
-                <md-button class="md-just-icon md-round md-google">
+                <md-button class="md-just-icon md-round md-google" @click="googleLogin">
                   <i class="fab fa-google"></i>
                 </md-button>
               </div>
@@ -96,6 +96,7 @@
 <script>
 import { SlideYDownTransition } from "vue2-transitions";
 import firebaseUtilFuncs from "@/utils/firebase/firebaseUtil.js";
+import firebase from "firebase";
 import { SignupCard } from "@/components";
 export default {
   components: {
@@ -109,7 +110,7 @@ export default {
         .createUserWithEmailAndPassword(this.email, this.password)
         .then(data => {
           localStorage.setItem("isLoggedIn", true);
-          firebaseUtilFuncs.createData('user', {email: this.email})
+          firebaseUtilFuncs.createData('users', {email: data.user.email})
           this.$router.replace({ name: "Dashboard" });
           data.user
             .updateProfile({
@@ -122,6 +123,30 @@ export default {
         .catch(err => {
           this.signupError = err.message;
         });
+    },
+    async googleLogin() {
+      var provider = new firebase.auth.GoogleAuthProvider();
+      firebase.auth().signInWithPopup(provider).then(async (result) => {
+        var token = result.credential.accessToken;
+        var user = result.user;
+        const usersRef = this.$firebaseGlobDB.collection('users');
+        const snapshot = await usersRef.where('email', '==', user.email).get();
+        if (snapshot.empty) {
+          firebaseUtilFuncs.createData('users', {email: user.email})
+        }
+        this.$router.replace({ name: "Dashboard" });
+      }).catch(function(error) {
+        console.log(error)
+        console.log("failed")
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        // The email of the user's account used.
+        var email = error.email;
+        // The firebase.auth.AuthCredential type that was used.
+        var credential = error.credential;
+        // ...
+      });
     }
   },
   data() {

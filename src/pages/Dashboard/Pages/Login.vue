@@ -25,6 +25,7 @@
               slot="buttons"
               href="#google"
               class="md-just-icon md-simple md-white"
+              @click="googleLogin"
             >
               <i class="fab fa-google-plus-g"></i>
             </md-button>
@@ -71,6 +72,7 @@
 </template>
 <script>
 import { LoginCard } from "@/components";
+import firebase from "firebase";
 export default {
   components: {
     LoginCard
@@ -96,6 +98,30 @@ export default {
           localStorage.setItem("isLoggedIn", false);
           this.signinError = err.message;
         });
+    },
+    async googleLogin() {
+      var provider = new firebase.auth.GoogleAuthProvider();
+      firebase.auth().signInWithPopup(provider).then(async (result) => {
+        var token = result.credential.accessToken;
+        var user = result.user;
+        const usersRef = this.$firebaseGlobDB.collection('users');
+        const snapshot = await usersRef.where('email', '==', user.email).get();
+        if (snapshot.empty) {
+          firebaseUtilFuncs.createData('users', {email: user.email})
+        }
+        this.$router.replace({ name: "Dashboard" });
+      }).catch(function(error) {
+        console.log(error)
+        console.log("failed")
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        // The email of the user's account used.
+        var email = error.email;
+        // The firebase.auth.AuthCredential type that was used.
+        var credential = error.credential;
+        // ...
+      });
     }
   }
 };
