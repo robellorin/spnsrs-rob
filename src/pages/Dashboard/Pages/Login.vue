@@ -109,13 +109,12 @@ export default {
         const snapshot = await usersRef.where('email', '==', user.email).get();
         var userId = null;
         if (snapshot.empty) {
-          userId = firebaseUtilFuncs.createData('users', {email: user.email})
+          userId = await firebaseUtilFuncs.createData('users', {email: user.email})
         } else {
           snapshot.forEach(doc => {
             userId = doc.id;
           })
         }
-        console.log("userId:", userId)
         this.$router.replace({ name: "Dashboard" });
       }).catch(function(error) {
         console.log(error)
