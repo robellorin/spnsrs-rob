@@ -1,16 +1,9 @@
 import firebase from "./firebaseInit";
 const firebaseDB = firebase.firestore();
 const firebaseUtilFuncs = {
-  createData(collection, data) {
-    firebaseDB
-      .collection(collection)
-      .add(data)
-      .then(() => {
-        console.log("Document successfully written!");
-      })
-      .catch(error => {
-        console.error("Error writing document: ", error);
-      });
+  async createData(collection, data) {
+    let docRef = await firebaseDB.collection(collection).add(data);
+    return docRef.id;
   },
 
   readData(collection) {

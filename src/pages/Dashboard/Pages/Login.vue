@@ -73,6 +73,7 @@
 <script>
 import { LoginCard } from "@/components";
 import firebase from "firebase";
+import firebaseUtilFuncs from "@/utils/firebase/firebaseUtil.js";
 export default {
   components: {
     LoginCard
@@ -106,9 +107,15 @@ export default {
         var user = result.user;
         const usersRef = this.$firebaseGlobDB.collection('users');
         const snapshot = await usersRef.where('email', '==', user.email).get();
+        var userId = null;
         if (snapshot.empty) {
-          firebaseUtilFuncs.createData('users', {email: user.email})
+          userId = firebaseUtilFuncs.createData('users', {email: user.email})
+        } else {
+          snapshot.forEach(doc => {
+            userId = doc.id;
+          })
         }
+        console.log("userId:", userId)
         this.$router.replace({ name: "Dashboard" });
       }).catch(function(error) {
         console.log(error)
