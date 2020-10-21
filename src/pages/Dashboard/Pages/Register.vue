@@ -9,7 +9,6 @@
               class="md-layout-item md-size-100 md-medium-size-100 md-small-size-100 mr-auto"
               slot="content-right"
             >
-              
               <ValidationProvider
                 name="email"
                 rules="required|email"
@@ -115,7 +114,7 @@ export default {
             id: newUser.id,
             email: data.user.email
           })
-          this.$router.replace({ name: "Dashboard" });
+          this.$router.replace({ name: "Complete profile" });
         })
         .catch(err => {
           console.log(err)
@@ -144,7 +143,7 @@ export default {
             })
           })
         }
-        this.$router.replace({ name: "Dashboard" });
+        this.$router.replace({ name: "Complete profile" });
       }).catch(function(error) {
         console.log("social login failed")
         console.log(error)

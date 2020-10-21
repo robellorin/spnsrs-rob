@@ -21,6 +21,9 @@
             :link="{ name: 'Register', path: '/register' }"
           ></sidebar-item>
           <sidebar-item
+            :link="{ name: 'Profile Complete', path: '/pages/profilebuild' }"
+          ></sidebar-item>
+          <sidebar-item
             :link="{ name: 'Pricing', path: '/pricing' }"
           ></sidebar-item>
           <sidebar-item

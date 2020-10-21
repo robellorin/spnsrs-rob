@@ -25,22 +25,7 @@
           </ValidationProvider>
         </div>
         <div class="md-layout-item md-size-30 md-small-size-100">
-          <ValidationProvider name="streetNumber" v-slot="{ passed, failed }">
-            <md-field :class="[{ 'md-error': failed }, { 'md-valid': passed }]">
-              <label>Street Number</label>
-              <md-input v-model="streetNumber" type="text"> </md-input>
-
-              <slide-y-down-transition>
-                <md-icon class="error" v-show="failed">close</md-icon>
-              </slide-y-down-transition>
-              <slide-y-down-transition>
-                <md-icon class="success" v-show="passed">done</md-icon>
-              </slide-y-down-transition>
-            </md-field>
-          </ValidationProvider>
-        </div>
-        <div class="md-layout-item md-small-size-100">
-          <ValidationProvider name="city" v-slot="{ passed, failed }">
+          <ValidationProvider name="city" v-slot="{ passed, failed }" rules="required">
             <md-field :class="[{ 'md-error': failed }, { 'md-valid': passed }]">
               <label>City</label>
               <md-input v-model="city" type="text"> </md-input>
@@ -55,15 +40,32 @@
           </ValidationProvider>
         </div>
         <div class="md-layout-item md-small-size-100">
-          <md-field>
-            <label for="select">Single Select</label>
-            <md-select v-model="select" name="select">
-              <md-option value="angola">Angola</md-option>
-              <md-option value="france">France</md-option>
-              <md-option value="germany">Germany</md-option>
-              <md-option value="england">England</md-option>
-            </md-select>
-          </md-field>
+          <ValidationProvider name="state" v-slot="{ passed, failed }" rules="required">
+            <md-field :class="[{ 'md-error': failed }, { 'md-valid': passed }]">
+              <label>State</label>
+              <md-input v-model="state" type="text"> </md-input>
+
+              <slide-y-down-transition>
+                <md-icon class="error" v-show="failed">close</md-icon>
+              </slide-y-down-transition>
+              <slide-y-down-transition>
+                <md-icon class="success" v-show="passed">done</md-icon>
+              </slide-y-down-transition>
+            </md-field>
+          </ValidationProvider>
+        </div>
+        <div class="md-layout-item md-small-size-100">
+          <ValidationProvider name="country" rules="required" v-slot="{ passed, failed }" >
+            <md-field :class="[{ 'md-error': failed }, { 'md-valid': passed }]">
+              <label for="country" :class="failed?'error':'success'">Country</label>
+              <md-select v-model="country" name="country">
+                <md-option value="angola">Angola</md-option>
+                <md-option value="france">France</md-option>
+                <md-option value="germany">Germany</md-option>
+                <md-option value="england">England</md-option>
+              </md-select>
+            </md-field>
+          </ValidationProvider>
         </div>
       </div>
     </form>
@@ -84,10 +86,9 @@ export default {
   data() {
     return {
       streetName: "",
-      streetNumber: "",
+      state: "",
       city: "",
-      country: "",
-      select: null,
+      country: null,
       countryOptions: ["One", "Two", "Three", "Four", "Five", "Six"]
     };
   },

@@ -1,12 +1,15 @@
 <template>
   <form>
-    <md-card>
+    <md-card class="md-card-profile">
       <md-card-header
         class="md-card-header-icon"
         :class="getClass(headerColor)"
       >
-        <div class="card-icon">
+        <!-- <div class="card-icon">
           <md-icon>perm_identity</md-icon>
+        </div> -->
+        <div class="md-card-avatar">
+          <img class="img" :src="cardUserImage" />
         </div>
         <h4 class="title">
           Edit Profile - <small>Complete your profile</small>
@@ -101,6 +104,10 @@
 export default {
   name: "edit-profile-form",
   props: {
+    cardUserImage: {
+      type: String,
+      default: "./img/faces/marc.jpg"
+    },
     headerColor: {
       type: String,
       default: ""
@@ -108,6 +115,7 @@ export default {
   },
   data() {
     return {
+      nickname: null,
       slugname: null,
       username: null,
       disabled: null,
@@ -116,6 +124,8 @@ export default {
       firstname: null,
       address: null,
       city: null,
+      state: null,
+      phonenumber: null,
       country: null,
       code: null,
       aboutme: "Profile description"

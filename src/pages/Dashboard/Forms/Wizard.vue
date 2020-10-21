@@ -9,37 +9,37 @@
           </h5>
         </template>
 
-        <wizard-tab :before-change="() => validateStep('step1')">
-          <template slot="label">
-            About
-          </template>
-          <first-step ref="step1" @on-validated="onStepValidated"></first-step>
-        </wizard-tab>
-
         <wizard-tab :before-change="() => validateStep('step2')">
           <template slot="label">
-            Account
+            Account Type
           </template>
-          <second-step
+          <profile-type-form
             ref="step2"
             @on-validated="onStepValidated"
-          ></second-step>
+          ></profile-type-form>
+        </wizard-tab>
+
+        <wizard-tab :before-change="() => validateStep('step1')">
+          <template slot="label">
+            About Me
+          </template>
+          <about-me-form ref="step1" @on-validated="onStepValidated"></about-me-form>
         </wizard-tab>
 
         <wizard-tab :before-change="() => validateStep('step3')">
           <template slot="label">
             Address
           </template>
-          <third-step ref="step3" @on-validated="wizardComplete"></third-step>
+          <address-form ref="step3" @on-validated="wizardComplete"></address-form>
         </wizard-tab>
       </simple-wizard>
     </div>
   </div>
 </template>
 <script>
-import FirstStep from "./Wizard/FirstStep.vue";
-import SecondStep from "./Wizard/SecondStep.vue";
-import ThirdStep from "./Wizard/ThirdStep.vue";
+import AboutMeForm from "./Wizard/AboutMeForm.vue";
+import ProfileTypeForm from "./Wizard/ProfileTypeForm.vue";
+import AddressForm from "./Wizard/AddressForm.vue";
 import Swal from "sweetalert2";
 import { SimpleWizard, WizardTab } from "@/components";
 
@@ -50,18 +50,21 @@ export default {
     };
   },
   components: {
-    FirstStep,
-    SecondStep,
-    ThirdStep,
+    AboutMeForm,
+    ProfileTypeForm,
+    AddressForm,
     SimpleWizard,
     WizardTab
   },
   methods: {
     validateStep(ref) {
+      console.log("validateStep")
       return this.$refs[ref].validate();
     },
     onStepValidated(validated, model) {
+      console.log("onStepValidated")
       this.wizardModel = { ...this.wizardModel, ...model };
+      console.log(model);
     },
     wizardComplete() {
       Swal.fire({

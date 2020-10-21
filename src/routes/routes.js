@@ -183,6 +183,11 @@ let pagesMenu = {
       path: "timeline",
       name: "Timeline Page",
       components: { default: TimeLine }
+    },
+    {
+      path: "profilebuild",
+      name: "Complete profile",
+      components: { default: Wizard }
     }
   ]
 };
