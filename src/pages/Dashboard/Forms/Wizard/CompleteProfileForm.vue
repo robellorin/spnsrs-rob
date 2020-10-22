@@ -82,7 +82,7 @@ export default {
     })
   },
   created() {
-    this.image = this.authUser.image;
+    this.image = this.authUser.image || "";
     this.username = this.authUser.username;
   },
   methods: {

@@ -235,23 +235,24 @@
                 ></md-input>
               </md-field>
             </div>
-            <div class="md-layout-item md-small-size-100 md-size-33">
+            <div class="md-layout-item social-buttons md-small-size-100 md-size-33">
               <md-field>
-                <md-icon>facebook</md-icon>
+                <!-- <md-icon>facebook</md-icon> -->
+                <md-icon class="facebook"><i class="md-facebook fab fa-facebook"></i></md-icon>
                 <label>Facebook</label>
                 <md-input v-model="userProfile.facebook" type="text"></md-input>
               </md-field>
             </div>
-            <div class="md-layout-item md-small-size-100 md-size-33">
+            <div class="md-layout-item social-buttons md-small-size-100 md-size-33">
               <md-field>
-                <md-icon class="fab fa-twitter"></md-icon>
+                <md-icon class="twitter"><i class="fab fa-twitter"></i></md-icon>
                 <label>Twitter</label>
                 <md-input v-model="userProfile.twitter" type="text"></md-input>
               </md-field>
             </div>
-            <div class="md-layout-item md-small-size-100 md-size-33">
+            <div class="md-layout-item social-buttons md-small-size-100 md-size-33">
               <md-field>
-                <md-icon class="fab fa-instagram"></md-icon>
+                <md-icon class="instagram"><i class="fab fa-instagram"></i></md-icon>
                 <label>Instagram</label>
                 <md-input
                   v-model="userProfile.instagram"
@@ -451,6 +452,15 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.facebook {
+  color: #3b5998!important
+}
+.twitter {
+  color: #55acee!important
+}
+.instagram {
+  color: #125688!important
+}
 .md-card-header {
   position: relative;
 

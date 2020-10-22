@@ -50,6 +50,7 @@ import ProfileInfoForm from "./Wizard/ProfileInfoForm.vue";
 import Swal from "sweetalert2";
 import { SimpleWizard, WizardTab } from "@/components";
 import firebaseUtilFuncs from "@/utils/firebase/firebaseUtil.js";
+import { validate } from 'vee-validate';
 
 export default {
   data() {
@@ -75,8 +76,11 @@ export default {
     },
     onStepValidated(validated, model) {
       this.wizardModel = { ...this.wizardModel, ...model };
+
+      console.log(this.wizardModel)
     },
     async wizardComplete(validated, model) {
+      console.log(validated)
       if (validated) {
         this.wizardModel = { ...this.wizardModel, ...model };
         this.wizardModel.id = this.authUser.id;
@@ -122,7 +126,7 @@ export default {
             console.log(storageRef);
             this.wizardModel.image = storageRef;
           } else {
-            this.wizardModel.image = this.authUser.image;
+            this.wizardModel.image = this.authUser.image || '';
           }
           firebaseUtilFuncs.updateData("users", this.wizardModel)
           this.$store.commit("auth/setAuthUser", this.wizardModel);
