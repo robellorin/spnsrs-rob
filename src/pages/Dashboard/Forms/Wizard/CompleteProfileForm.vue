@@ -30,61 +30,12 @@
                 :class="[
                   { 'md-error': failed },
                   { 'md-valid': passed },
-                  { 'md-form-group': true }
+                  { 'md-form-group': true },
                 ]"
               >
                 <md-icon>how_to_reg</md-icon>
                 <label>UserName</label>
                 <md-input v-model="userName" type="text"> </md-input>
-
-                <slide-y-down-transition>
-                  <md-icon class="error" v-show="failed">close</md-icon>
-                </slide-y-down-transition>
-                <slide-y-down-transition>
-                  <md-icon class="success" v-show="passed">done</md-icon>
-                </slide-y-down-transition>
-              </md-field>
-            </ValidationProvider>
-            <ValidationProvider
-              name="firstName"
-              rules="required"
-              v-slot="{ passed, failed }"
-            >
-              <md-field
-                :class="[
-                  { 'md-error': failed },
-                  { 'md-valid': passed },
-                  { 'md-form-group': true }
-                ]"
-              >
-                <md-icon>face</md-icon>
-                <label>First Name</label>
-                <md-input v-model="firstName" type="text"> </md-input>
-
-                <slide-y-down-transition>
-                  <md-icon class="error" v-show="failed">close</md-icon>
-                </slide-y-down-transition>
-                <slide-y-down-transition>
-                  <md-icon class="success" v-show="passed">done</md-icon>
-                </slide-y-down-transition>
-              </md-field>
-            </ValidationProvider>
-
-            <ValidationProvider
-              name="lastName"
-              rules="required"
-              v-slot="{ passed, failed }"
-            >
-              <md-field
-                :class="[
-                  { 'md-error': failed },
-                  { 'md-valid': passed },
-                  { 'md-form-group': true }
-                ]"
-              >
-                <md-icon></md-icon>
-                <label>Last Name</label>
-                <md-input v-model="lastName" type="text"> </md-input>
 
                 <slide-y-down-transition>
                   <md-icon class="error" v-show="failed">close</md-icon>
@@ -136,21 +87,18 @@ extend("email", email);
 
 export default {
   components: {
-    SlideYDownTransition
+    SlideYDownTransition,
   },
   props: {
     avatar: {
       type: String,
-      default: "./img/default-avatar.png"
-    }
+      default: "./img/default-avatar.png",
+    },
   },
   data() {
     return {
       image: "",
-      userName: "username",
-      firstName: "John",
-      lastName: "Doe",
-      email: "Doe"
+      userName: ""
     };
   },
   methods: {
@@ -165,9 +113,8 @@ export default {
     validate() {
       return this.$refs.form.validate().then((res) => {
         this.$emit("on-validated", res, {
-          userName: this.userName,
-          firstName: this.firstName,
-          lastName: this.lastName
+          username: this.userName,
+          image: this.image.split(',')[1]
         });
         return res;
       });
@@ -176,12 +123,12 @@ export default {
       var reader = new FileReader();
       var vm = this;
 
-      reader.onload = e => {
+      reader.onload = async e => {
         vm.image = e.target.result;
       };
       reader.readAsDataURL(file);
-    }
-  }
+    },
+  },
 };
 </script>
 <style></style>

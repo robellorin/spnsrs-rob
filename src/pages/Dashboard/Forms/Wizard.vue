@@ -9,72 +9,154 @@
           </h5>
         </template>
 
-        <wizard-tab :before-change="() => validateStep('step2')">
+        <wizard-tab :before-change="() => validateStep('step1')">
           <template slot="label">
             Account Type
           </template>
           <profile-type-form
-            ref="step2"
+            ref="step1"
             @on-validated="onStepValidated"
           ></profile-type-form>
         </wizard-tab>
 
-        <wizard-tab :before-change="() => validateStep('step1')">
+        <wizard-tab :before-change="() => validateStep('step2')">
           <template slot="label">
-            About Me
+            Profile Info
           </template>
-          <about-me-form ref="step1" @on-validated="onStepValidated"></about-me-form>
+          <profile-info-form
+            ref="step2"
+            @on-validated="onStepValidated"
+          ></profile-info-form>
         </wizard-tab>
 
         <wizard-tab :before-change="() => validateStep('step3')">
           <template slot="label">
-            Address
+            Complete Profile
           </template>
-          <address-form ref="step3" @on-validated="wizardComplete"></address-form>
+          <complete-profile-form
+            ref="step3"
+            @on-validated="wizardComplete"
+          ></complete-profile-form>
         </wizard-tab>
       </simple-wizard>
     </div>
   </div>
 </template>
 <script>
-import AboutMeForm from "./Wizard/AboutMeForm.vue";
+import { mapGetters } from 'vuex'
+import CompleteProfileForm from "./Wizard/CompleteProfileForm.vue";
 import ProfileTypeForm from "./Wizard/ProfileTypeForm.vue";
-import AddressForm from "./Wizard/AddressForm.vue";
+import ProfileInfoForm from "./Wizard/ProfileInfoForm.vue";
 import Swal from "sweetalert2";
 import { SimpleWizard, WizardTab } from "@/components";
+import firebaseUtilFuncs from "@/utils/firebase/firebaseUtil.js";
 
 export default {
   data() {
     return {
-      wizardModel: {}
+      wizardModel: {},
     };
   },
+  computed: {
+    ...mapGetters({
+      authUser: 'auth/getAuthUser'
+    })
+  },
   components: {
-    AboutMeForm,
+    CompleteProfileForm,
     ProfileTypeForm,
-    AddressForm,
+    ProfileInfoForm,
     SimpleWizard,
-    WizardTab
+    WizardTab,
   },
   methods: {
     validateStep(ref) {
-      console.log("validateStep")
       return this.$refs[ref].validate();
     },
     onStepValidated(validated, model) {
-      console.log("onStepValidated")
       this.wizardModel = { ...this.wizardModel, ...model };
-      console.log(model);
     },
-    wizardComplete() {
-      Swal.fire({
-        title: "Good job!",
-        text: "You clicked the finish button!",
-        type: "success",
-        confirmButtonClass: "md-button md-success",
-        buttonsStyling: false
-      });
-    }
-  }
+    async wizardComplete(validated, model) {
+      console.log(this.authUser)
+      const vm =this;
+      if (validated) {
+        this.wizardModel = { ...this.wizardModel, ...model };
+        this.wizardModel.id = this.authUser.id;
+        this.profilecompleted = true
+        let isNew = true;
+        let authUserId = this.authUser.id
+            
+        let usersRef = this.$firebaseGlobDB.collection("users");
+        let snapshot = await usersRef
+          .where("username", "==", this.wizardModel.username)
+          .get();
+
+        if (snapshot.empty) {
+          isNew = true;
+        } else {
+          snapshot.forEach(function (doc) {
+            if (doc.id == authUserId) {
+              isNew = true
+            } else {
+              isNew = false
+            }
+          });
+        }
+
+        if (isNew) {
+          console.log(this.wizardModel.username + ' is available')
+          if (this.wizardModel.image) {
+            console.log(`Avatar Image uploading for user[${this.wizardModel.username}]`);
+            const storageRef = await this.$firebaseGlob
+              .storage()
+              .ref(`/users/profile/${authUserId}`)
+              .child("profilePicture")
+              .putString(this.wizardModel.image, "base64", {
+                contentType: "image/jpg",
+              }).then((snapshot) => {
+               return snapshot.ref.getDownloadURL().then(function(downloadURL) {
+                console.log(downloadURL);
+                return downloadURL;
+                console.log("File available at", downloadURL);
+              });
+            });
+
+            console.log(storageRef);
+            this.wizardModel.image = storageRef;
+          } else {
+            this.wizardModel.image = ''
+          }
+          firebaseUtilFuncs.updateData("users", this.wizardModel)
+          this.$store.commit("auth/setAuthUser", this.wizardModel);
+
+          Swal.fire({
+            title: "Good job!",
+            text: "You clicked the finish button!",
+            type: "success",
+            confirmButtonClass: "md-button md-success",
+            buttonsStyling: false,
+          });
+        } else {
+          console.log(this.wizardModel.username + ' is already registered')
+          Swal.fire({
+            title: "The username is not available.",
+            text: "Sorry! The Username is already taken by another user. Please use another username.",
+            type: "danger",
+            confirmButtonClass: "md-button md-danger",
+            buttonsStyling: false,
+          });
+          return false;
+        }
+      } else {
+        Swal.fire({
+          title: "Please Fill a username!",
+          text: "enter your username!",
+          type: "danger",
+          confirmButtonClass: "md-button md-danger",
+          buttonsStyling: false,
+        });
+      }
+    },
+  },
 };
 </script>

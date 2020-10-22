@@ -12,7 +12,7 @@
 // * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 import Vue from "vue";
-import Vuex from "vuex";
+import Vuex, { com } from "vuex";
 import VueRouter from "vue-router";
 import DashboardPlugin from "./material-dashboard";
 
@@ -34,22 +34,14 @@ Vue.use(DashboardPlugin);
 // configure router
 const router = new VueRouter({
   routes, // short for routes: routes
-  scrollBehavior: to => {
+  scrollBehavior: (to) => {
     if (to.hash) {
       return { selector: to.hash };
     } else {
       return { x: 0, y: 0 };
     }
   },
-  linkExactActiveClass: "nav-item active"
-});
-
-firebase.auth().onAuthStateChanged(function(user) {
-  if (user) {
-    localStorage.setItem("isLoggedIn", true);
-  } else {
-    localStorage.setItem("isLoggedIn", false);
-  }
+  linkExactActiveClass: "nav-item active",
 });
 
 router.beforeEach((to, from, next) => {
@@ -76,7 +68,24 @@ Vue.prototype.$firebaseGlobDB = firebase.firestore();
 /* eslint-disable no-new */
 new Vue({
   el: "#app",
-  render: h => h(App),
+  render: (h) => h(App),
   router,
-  store
+  store,
+  created() {
+    firebase.auth().onAuthStateChanged(async function(user) {
+      if (user) {
+        localStorage.setItem("isLoggedIn", true);
+        const usersRef = firebase.firestore().collection("users");
+        const snapshot = await usersRef.where("email", "==", user.email).get();
+        snapshot.forEach((doc) => {
+          store.commit("auth/setAuthUser", {
+            id: doc.id,
+            ...doc.data(),
+          });
+        });
+      } else {
+        localStorage.setItem("isLoggedIn", false);
+      }
+    });
+  },
 });

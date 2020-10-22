@@ -1,17 +1,9 @@
 <template>
-  <div>
+  <form @submit.prevent="validate">
     <h5 class="info-text">What are you doing? (checkboxes)</h5>
     <div class="md-layout">
       <div class="md-layout-item">
         <div class="md-layout">
-          <!-- <div class="md-layout-item md-size-33 md-small-size-100">
-            <icon-checkbox
-              v-model="model.design"
-              icon="fas fa-pencil-alt"
-              title="Design"
-            >
-            </icon-checkbox>
-          </div> -->
           <div class="md-layout-item md-size-50 md-small-size-100">
             <icon-checkbox
               v-model="model.influencer"
@@ -31,7 +23,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </form>
 </template>
 <script>
 import { IconCheckbox } from "@/components";
@@ -44,7 +36,7 @@ export default {
     return {
       model: {
         influencer: false,
-        sponcer: false
+        sponsor: false
       }
     };
   },

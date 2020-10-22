@@ -6,7 +6,7 @@ const firebaseUtilFuncs = {
     return docRef;
   },
 
-  async readData(collection) {
+  readData(collection) {
     let rows = [];
     firebaseDB
       .collection(collection)
@@ -26,17 +26,16 @@ const firebaseUtilFuncs = {
       });
   },
 
-  updateData(collection, data) {
-    firebaseDB
-      .collection(collection)
-      .doc(data.id)
-      .update(data)
-      .then(() => {
-        console.log("Document successfully updated!");
-      })
-      .catch(error => {
-        console.error("Error updating document: ", error);
-      });
+  async updateData(collection, data) {
+    try {
+      await firebaseDB
+        .collection(collection)
+        .doc(data.id)
+        .update(data);
+      console.log("Document successfully updated!");
+    } catch (error) {
+      console.log("Error getting documents: ", error);
+    }
   },
   deleteData(collection, id) {
     firebaseDB
