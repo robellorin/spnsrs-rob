@@ -27,10 +27,10 @@
                 </a>
               </li>
               <li>
-                <a href="#vue">
+                <router-link to="/pages/user">
                   <span class="sidebar-mini">EP</span>
                   <span class="sidebar-normal">Edit Profile</span>
-                </a>
+                </router-link>
               </li>
               <li>
                 <a href="#vue">

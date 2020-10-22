@@ -22,7 +22,7 @@
           </div>
           <div class="md-layout-item md-size-60 md-small-size-100">
             <ValidationProvider
-              name="userName"
+              name="username"
               rules="required"
               v-slot="{ passed, failed }"
             >
@@ -34,8 +34,8 @@
                 ]"
               >
                 <md-icon>how_to_reg</md-icon>
-                <label>UserName</label>
-                <md-input v-model="userName" type="text"> </md-input>
+                <label>Username</label>
+                <md-input v-model="username" type="text"> </md-input>
 
                 <slide-y-down-transition>
                   <md-icon class="error" v-show="failed">close</md-icon>
@@ -46,38 +46,13 @@
               </md-field>
             </ValidationProvider>
           </div>
-          <!-- <div class="md-layout-item md-size-95 ml-auto mt-4 md-small-size-100">
-            <ValidationProvider
-              name="email"
-              rules="required|email"
-              v-slot="{ passed, failed }"
-            >
-              <md-field
-                :class="[
-                  { 'md-error': failed },
-                  { 'md-valid': passed },
-                  { 'md-form-group': true }
-                ]"
-              >
-                <md-icon>email</md-icon>
-                <label>Email</label>
-                <md-input v-model="email" type="text"> </md-input>
-
-                <slide-y-down-transition>
-                  <md-icon class="error" v-show="failed">close</md-icon>
-                </slide-y-down-transition>
-                <slide-y-down-transition>
-                  <md-icon class="success" v-show="passed">done</md-icon>
-                </slide-y-down-transition>
-              </md-field>
-            </ValidationProvider>
-          </div> -->
         </div>
       </div>
     </form>
   </ValidationObserver>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 import { SlideYDownTransition } from "vue2-transitions";
 import { extend } from "vee-validate";
 import { required, email } from "vee-validate/dist/rules";
@@ -98,8 +73,17 @@ export default {
   data() {
     return {
       image: "",
-      userName: ""
+      username: "",
     };
+  },
+  computed: {
+    ...mapGetters({
+      authUser: 'auth/getAuthUser'
+    })
+  },
+  created() {
+    this.image = this.authUser.image;
+    this.username = this.authUser.username;
   },
   methods: {
     handlePreview(file) {
@@ -111,11 +95,14 @@ export default {
       this.createImage(files[0]);
     },
     validate() {
-      return this.$refs.form.validate().then((res) => {
+      return this.$refs.form.validate().then(res => {
+        if (!res) {
+          return;
+        }
         this.$emit("on-validated", res, {
-          username: this.userName,
-          image: this.image.split(',')[1]
-        });
+            username: this.username,
+            image: this.image.split(",")[1],
+          });
         return res;
       });
     },
@@ -123,7 +110,7 @@ export default {
       var reader = new FileReader();
       var vm = this;
 
-      reader.onload = async e => {
+      reader.onload = async (e) => {
         vm.image = e.target.result;
       };
       reader.readAsDataURL(file);

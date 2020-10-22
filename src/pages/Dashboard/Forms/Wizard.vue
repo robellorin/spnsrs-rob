@@ -77,8 +77,6 @@ export default {
       this.wizardModel = { ...this.wizardModel, ...model };
     },
     async wizardComplete(validated, model) {
-      console.log(this.authUser)
-      const vm =this;
       if (validated) {
         this.wizardModel = { ...this.wizardModel, ...model };
         this.wizardModel.id = this.authUser.id;
@@ -124,7 +122,7 @@ export default {
             console.log(storageRef);
             this.wizardModel.image = storageRef;
           } else {
-            this.wizardModel.image = ''
+            this.wizardModel.image = this.authUser.image;
           }
           firebaseUtilFuncs.updateData("users", this.wizardModel)
           this.$store.commit("auth/setAuthUser", this.wizardModel);

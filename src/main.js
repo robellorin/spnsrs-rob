@@ -43,6 +43,12 @@ const router = new VueRouter({
   },
   linkExactActiveClass: "nav-item active",
 });
+if (localStorage.getItem("isLoggedIn") === "true") {
+  store.commit(
+    "auth/setAuthUser",
+    JSON.parse(localStorage.getItem("authUser"))
+  );
+}
 
 router.beforeEach((to, from, next) => {
   if (localStorage.getItem("isLoggedIn") === "true") {
