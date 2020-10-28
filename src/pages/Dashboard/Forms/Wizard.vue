@@ -76,15 +76,11 @@ export default {
     },
     onStepValidated(validated, model) {
       this.wizardModel = { ...this.wizardModel, ...model };
-
-      console.log(this.wizardModel)
     },
     async wizardComplete(validated, model) {
-      console.log(validated)
       if (validated) {
         this.wizardModel = { ...this.wizardModel, ...model };
         this.wizardModel.id = this.authUser.id;
-        this.profilecompleted = true
         let isNew = true;
         let authUserId = this.authUser.id
             
@@ -128,16 +124,10 @@ export default {
           } else {
             this.wizardModel.image = this.authUser.image || '';
           }
+          this.wizardModel.profilecompleted = true
           firebaseUtilFuncs.updateData("users", this.wizardModel)
           this.$store.commit("auth/setAuthUser", this.wizardModel);
-
-          Swal.fire({
-            title: "Good job!",
-            text: "You clicked the finish button!",
-            type: "success",
-            confirmButtonClass: "md-button md-success",
-            buttonsStyling: false,
-          });
+          this.$router.replace({ name: "Dashboard" });
         } else {
           console.log(this.wizardModel.username + ' is already registered')
           Swal.fire({

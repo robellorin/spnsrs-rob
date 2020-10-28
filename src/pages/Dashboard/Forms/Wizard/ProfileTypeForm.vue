@@ -65,8 +65,8 @@ export default {
     })
   },
   created() {
-    this.model.influencer = this.authUser.influencer
-    this.model.sponsor = this.authUser.sponsor
+    this.model.influencer = this.authUser.influencer || null
+    this.model.sponsor = this.authUser.sponsor || null
     // this.profiletype = this.model.influencer | this.model.sponsor
   },
   methods: {

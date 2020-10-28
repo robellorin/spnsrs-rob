@@ -34,14 +34,14 @@ Vue.use(DashboardPlugin);
 // configure router
 const router = new VueRouter({
   routes, // short for routes: routes
-  scrollBehavior: (to) => {
+  scrollBehavior: to => {
     if (to.hash) {
       return { selector: to.hash };
     } else {
       return { x: 0, y: 0 };
     }
   },
-  linkExactActiveClass: "nav-item active",
+  linkExactActiveClass: "nav-item active"
 });
 if (localStorage.getItem("isLoggedIn") === "true") {
   store.commit(
@@ -53,9 +53,20 @@ if (localStorage.getItem("isLoggedIn") === "true") {
 router.beforeEach((to, from, next) => {
   if (localStorage.getItem("isLoggedIn") === "true") {
     if (to.name === "Login" || to.name == "Register") {
-      next({ name: "Dashboard" });
+      if (store.getters["auth/getAuthUser"].profilecompleted === true) {
+        next({ name: "Dashboard" });
+      } else {
+        next({ name: "Complete profile" });
+      }
     } else {
-      next();
+      if (
+        store.getters["auth/getAuthUser"].profilecompleted === true ||
+        to.name === "Complete profile"
+      ) {
+        next();
+      } else {
+        next({ name: "Complete profile" });
+      }
     }
   } else {
     if (to.name === "Login" || to.name == "Register") {
@@ -74,7 +85,7 @@ Vue.prototype.$firebaseGlobDB = firebase.firestore();
 /* eslint-disable no-new */
 new Vue({
   el: "#app",
-  render: (h) => h(App),
+  render: h => h(App),
   router,
   store,
   created() {
@@ -83,15 +94,15 @@ new Vue({
         localStorage.setItem("isLoggedIn", true);
         const usersRef = firebase.firestore().collection("users");
         const snapshot = await usersRef.where("email", "==", user.email).get();
-        snapshot.forEach((doc) => {
+        snapshot.forEach(doc => {
           store.commit("auth/setAuthUser", {
             id: doc.id,
-            ...doc.data(),
+            ...doc.data()
           });
         });
       } else {
         localStorage.setItem("isLoggedIn", false);
       }
     });
-  },
+  }
 });

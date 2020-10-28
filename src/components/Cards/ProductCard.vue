@@ -43,7 +43,7 @@
       <slot name="description"></slot>
     </md-card-content>
 
-    <md-card-actions md-alignment="space-between">
+    <md-card-actions md-alignment="right">
       <slot name="footer"></slot>
     </md-card-actions>
   </md-card>
@@ -95,4 +95,5 @@ export default {
 };
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+</style>

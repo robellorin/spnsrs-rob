@@ -1,5 +1,5 @@
 import firebase from "./firebaseInit";
-const firebaseDB = firebase.firestore();
+export const firebaseDB = firebase.firestore();
 const firebaseUtilFuncs = {
   async createData(collection, data) {
     let docRef = await firebaseDB.collection(collection).add(data);
@@ -8,20 +8,20 @@ const firebaseUtilFuncs = {
 
   readData(collection) {
     let rows = [];
-    firebaseDB
+    return firebaseDB
       .collection(collection)
       .get()
-      .then(querySnapshot => {
-        querySnapshot.forEach(doc => {
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
           rows.push({
             id: doc.id,
-            ...doc.data()
+            ...doc.data(),
           });
           console.log(doc.id, " => ", doc.data());
         });
         return rows;
       })
-      .catch(error => {
+      .catch((error) => {
         console.log("Error getting documents: ", error);
       });
   },
@@ -38,17 +38,17 @@ const firebaseUtilFuncs = {
     }
   },
   deleteData(collection, id) {
-    firebaseDB
+    return firebaseDB
       .collection(collection)
       .doc(id)
       .delete()
       .then(() => {
         console.log("Document successfully deleted!");
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Error removing document: ", error);
       });
-  }
+  },
 };
 
 export default firebaseUtilFuncs;

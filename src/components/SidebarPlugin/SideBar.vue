@@ -59,6 +59,7 @@
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex';
 export default {
   name: "sidebar",
   props: {
@@ -124,7 +125,7 @@ export default {
       return {
         backgroundImage: `url(${this.backgroundImage})`
       };
-    }
+    },
   },
   beforeDestroy() {
     if (this.$sidebar.showSidebar) {

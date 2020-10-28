@@ -1,7 +1,7 @@
 <template>
   <div class="user">
     <div class="photo">
-      <img :src="avatar" alt="avatar" />
+      <img :src="profileImage" alt="avatar" />
     </div>
     <div class="user-info">
       <a
@@ -11,7 +11,7 @@
         @click.capture="clicked"
       >
         <span>
-          {{ title }}
+          {{ name }}
           <b class="caret"></b>
         </span>
       </a>
@@ -47,6 +47,7 @@
 </template>
 <script>
 import { CollapseTransition } from "vue2-transitions";
+import {mapGetters} from 'vuex';
 
 export default {
   components: {
@@ -67,6 +68,18 @@ export default {
       isClosed: true
     };
   },
+  computed: {
+...mapGetters({
+      authUser: 'auth/getAuthUser'
+    }),
+    name() {
+      return this.authUser.nickname || this.authUser.firstname ? this.authUser.nickname || this.authUser.firstname : this.title;
+    },
+    profileImage() {
+      return this.authUser.image  ?  this.authUser.image : this.avatar;
+    },
+  }
+    ,
   methods: {
     clicked: function(e) {
       e.preventDefault();

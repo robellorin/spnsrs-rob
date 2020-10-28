@@ -118,6 +118,7 @@
       >
       </fixed-plugin>
 
+      <fixed-add-banner></fixed-add-banner>
       <div
         :class="{ content: !$route.meta.hideContent }"
         @click="toggleSidebar"
@@ -171,6 +172,7 @@ import TopNavbar from "./TopNavbar.vue";
 import ContentFooter from "./ContentFooter.vue";
 import MobileMenu from "./Extra/MobileMenu.vue";
 import FixedPlugin from "../../FixedPlugin.vue";
+import FixedAddBanner from "../../FixedAddBanner.vue";
 import UserMenu from "./Extra/UserMenu.vue";
 import { ZoomCenterTransition } from "vue2-transitions";
 
@@ -179,6 +181,7 @@ export default {
     TopNavbar,
     ContentFooter,
     FixedPlugin,
+    FixedAddBanner,
     MobileMenu,
     UserMenu,
     ZoomCenterTransition
