@@ -6,12 +6,12 @@
         <md-input v-model="search" type="text"></md-input>
       </md-field>
     </li>
-    <li>
-      <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+    <!-- <li>
+      <router-link to="/dashboard" class="dropdown-toggle" data-toggle="dropdown">
         <i class="material-icons">dashboard</i>
-        <p>Stats</p></a
-      >
-    </li>
+        <p>Dashboard</p>
+      </router-link>
+    </li> -->
     <li>
       <drop-down>
         <a slot="title" class="dropdown-toggle" data-toggle="dropdown">
@@ -29,10 +29,10 @@
       </drop-down>
     </li>
     <li>
-      <a href="#" data-toggle="dropdown" class="dropdown-toggle"
+      <router-link to="/pages/user" data-toggle="dropdown" class="dropdown-toggle"
         ><i class="material-icons">person</i>
-        <p>Account</p></a
-      >
+        <p>Account</p>
+      </router-link>
     </li>
   </ul>
 </template>
