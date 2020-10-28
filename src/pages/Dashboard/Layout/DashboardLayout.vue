@@ -13,9 +13,9 @@
           :link="{ name: 'Dashboard', icon: 'dashboard', path: '/dashboard' }"
         >
         </sidebar-item>
-        <!-- <sidebar-item
-            :link="{ name: 'Profile Complete', icon: 'image', path: '/pages/profilebuild' }"
-        ></sidebar-item> -->
+        <sidebar-item
+            :link="{ name: 'Public profile', icon: 'image', path: '/pages/publicprofile' }"
+        ></sidebar-item>
         <!-- <sidebar-item :link="{ name: 'Pages', icon: 'image' }">
           <sidebar-item
             :link="{ name: 'Login', path: '/login' }"

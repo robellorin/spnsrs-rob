@@ -6,6 +6,7 @@ import Dashboard from "@/pages/Dashboard/Dashboard.vue";
 
 // Pages
 import User from "@/pages/Dashboard/Pages/UserProfile.vue";
+import PublicUser from "@/pages/Dashboard/Pages/UserPublicProfile.vue";
 import Pricing from "@/pages/Dashboard/Pages/Pricing.vue";
 import TimeLine from "@/pages/Dashboard/Pages/TimeLinePage.vue";
 import Login from "@/pages/Dashboard/Pages/Login.vue";
@@ -178,6 +179,11 @@ let pagesMenu = {
       path: "user",
       name: "User Page",
       components: { default: User }
+    },
+    {
+      path: "publicprofile",
+      name: "PublicUserProfile",
+      components: { default: PublicUser }
     },
     {
       path: "timeline",
