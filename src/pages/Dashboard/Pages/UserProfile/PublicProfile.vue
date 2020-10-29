@@ -7,11 +7,8 @@
           :class="getClass(headerColor)"
         >
           <div class="md-card-banner">
-            <div v-if="banner">
-              <img :src="banner" alt="banner image" />
-            </div>
-            <div v-else-if="userProfile.banner">
-              <img :src="userProfile.banner" alt="banner image" />
+            <div v-if="publicuser.banner">
+              <img :src="publicuser.banner" alt="banner image" />
             </div>
             <div v-else>
               <img
@@ -22,27 +19,25 @@
           </div>
           <div class="md-card-avatar">
             <div class="picture">
-              <div v-if="image">
-                <img :src="image" title="" />
-              </div>
-              <div v-else-if="userProfile.image">
-                <img :src="userProfile.image" />
+              <div v-if="publicuser.image">
+                <img :src="publicuser.image" />
               </div>
               <div v-else>
                 <img :src="avatar" title="" />
               </div>
-              <input type="file" @change="onProfilePictureChange" />
             </div>
           </div>
-          <h4 class="title">
-            John Doe(@jhohndoe82)
-          </h4>
+          <h3 class="title">
+            {{publicuser.firstname + ' ' + publicuser.lastname + `(@${publicuser.username})`}}
+          </h3>
           <p class="description">
-            Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen.
+            {{publicuser.description}}
           </p>
-          <md-icon class="facebook"><i class="md-facebook fab fa-facebook"></i></md-icon>
-          <md-icon class="twitter"><i class="fab fa-twitter"></i></md-icon>
-          <md-icon class="instagram"><i class="fab fa-instagram"></i></md-icon>
+          <div class="md-social">
+            <md-icon class="facebook"><i class="md-facebook fab fa-facebook"></i></md-icon>
+            <md-icon class="twitter"><i class="fab fa-twitter"></i></md-icon>
+            <md-icon class="instagram"><i class="fab fa-instagram"></i></md-icon>
+          </div>
         </md-card-header>
         <md-card-content>
           <div class="md-layout">
@@ -72,7 +67,7 @@ import { mapGetters } from "vuex";
 import { ProductCard } from "@/components";
 import { extend } from "vee-validate";
 import { required } from "vee-validate/dist/rules";
-import firebaseUtilFuncs from "@/utils/firebase/firebaseUtil.js";
+import firebaseUtilFuncs, { firebaseDB } from "@/utils/firebase/firebaseUtil.js";
 import Swal from "sweetalert2";
 
 extend("required", required);
@@ -91,6 +86,10 @@ export default {
       type: String,
       default: "",
     },
+    // publicuser: {
+    //   type: Object,
+    //   default: {},
+    // },
   },
   computed: {
     sortedBanners: function() {
@@ -101,161 +100,45 @@ export default {
         if (b.priority == "High") return 1;
         return 0;
       }
-
       return this.banners.slice().sort(priority);
     },
     ...mapGetters({
-      authUser: "auth/getAuthUser",
-      banners: "banners/getBanners"
+      authUser: "auth/getAuthUser"
     }),
   },
   data() {
     return {
-      banner: null,
-      image: null,
-      userProfile: {},
-      countryOptions: ["Afghanistan", "Albania", "Algeria", "American Samoa", "Andorra", "Angola", "Anguilla", "Antarctica", "Antigua and Barbuda", "Argentina", "Armenia", "Aruba", "Australia", "Austria", "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bermuda", "Bhutan", "Bolivia", "Bosnia and Herzegowina", "Botswana", "Bouvet Island", "Brazil", "British Indian Ocean Territory", "Brunei Darussalam", "Bulgaria", "Burkina Faso", "Burundi", "Cambodia", "Cameroon", "Canada", "Cape Verde", "Cayman Islands", "Central African Republic", "Chad", "Chile", "China", "Christmas Island", "Cocos (Keeling) Islands", "Colombia", "Comoros", "Congo", "Congo, the Democratic Republic of the", "Cook Islands", "Costa Rica", "Cote d'Ivoire", "Croatia (Hrvatska)", "Cuba", "Cyprus", "Czech Republic", "Denmark", "Djibouti", "Dominica", "Dominican Republic", "East Timor", "Ecuador", "Egypt", "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Ethiopia", "Falkland Islands (Malvinas)", "Faroe Islands", "Fiji", "Finland", "France", "France Metropolitan", "French Guiana", "French Polynesia", "French Southern Territories", "Gabon", "Gambia", "Georgia", "Germany", "Ghana", "Gibraltar", "Greece", "Greenland", "Grenada", "Guadeloupe", "Guam", "Guatemala", "Guinea", "Guinea-Bissau", "Guyana", "Haiti", "Heard and Mc Donald Islands", "Holy See (Vatican City State)", "Honduras", "Hong Kong", "Hungary", "Iceland", "India", "Indonesia", "Iran (Islamic Republic of)", "Iraq", "Ireland", "Israel", "Italy", "Jamaica", "Japan", "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Korea, Democratic People's Republic of", "Korea, Republic of", "Kuwait", "Kyrgyzstan", "Lao, People's Democratic Republic", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libyan Arab Jamahiriya", "Liechtenstein", "Lithuania", "Luxembourg", "Macau", "Macedonia, The Former Yugoslav Republic of", "Madagascar", "Malawi", "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands", "Martinique", "Mauritania", "Mauritius", "Mayotte", "Mexico", "Micronesia, Federated States of", "Moldova, Republic of", "Monaco", "Mongolia", "Montserrat", "Morocco", "Mozambique", "Myanmar", "Namibia", "Nauru", "Nepal", "Netherlands", "Netherlands Antilles", "New Caledonia", "New Zealand", "Nicaragua", "Niger", "Nigeria", "Niue", "Norfolk Island", "Northern Mariana Islands", "Norway", "Oman", "Pakistan", "Palau", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Pitcairn", "Poland", "Portugal", "Puerto Rico", "Qatar", "Reunion", "Romania", "Russian Federation", "Rwanda", "Saint Kitts and Nevis", "Saint Lucia", "Saint Vincent and the Grenadines", "Samoa", "San Marino", "Sao Tome and Principe", "Saudi Arabia", "Senegal", "Seychelles", "Sierra Leone", "Singapore", "Slovakia (Slovak Republic)", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Georgia and the South Sandwich Islands", "Spain", "Sri Lanka", "St. Helena", "St. Pierre and Miquelon", "Sudan", "Suriname", "Svalbard and Jan Mayen Islands", "Swaziland", "Sweden", "Switzerland", "Syrian Arab Republic", "Taiwan, Province of China", "Tajikistan", "Tanzania, United Republic of", "Thailand", "Togo", "Tokelau", "Tonga", "Trinidad and Tobago", "Tunisia", "Turkey", "Turkmenistan", "Turks and Caicos Islands", "Tuvalu", "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States", "United States Minor Outlying Islands", "Uruguay", "Uzbekistan", "Vanuatu", "Venezuela", "Vietnam", "Virgin Islands (British)", "Virgin Islands (U.S.)", "Wallis and Futuna Islands", "Western Sahara", "Yemen", "Yugoslavia", "Zambia", "Zimbabwe"]
+      publicuser: {},
+      banners: []
     };
   },
-  created() {
-    this.userProfile = { ...this.authUser, ...this.userProfile };
+  async created() {
+    this.publicuser = { ...this.authUser };
+    this.banners = await firebaseDB
+      .collection("banners")
+      .where("userId", "==", this.authUser.id)
+      .get()
+      .then((querySnapshot) => {
+        let updatedBanners = [];
+        querySnapshot.forEach((doc) => {
+          updatedBanners.push({ id: doc.id, ...doc.data() });
+        });
+        return updatedBanners;
+      });
   },
   methods: {
     getClass: function(headerColor) {
       return "md-card-header-" + headerColor + "";
-    },
-    onProfilePictureChange(e) {
-      var files = e.target.files || e.dataTransfer.files;
-      if (!files.length) return;
-      this.createImage(files[0], 'profile');
-    },
-    onUserBannerChange(e) {
-      var files = e.target.files || e.dataTransfer.files;
-      if (!files.length) return;
-      this.createImage(files[0], 'banner');
-    },
-    validate() {
-      return this.$refs.form.validate().then((res) => {
-        if(!res) {
-          return;
-        }
-        console.log("All Fields Validated");
-        this.submitForm();
-        return res;
-      });
-    },
-    createImage(file, type) {
-      var reader = new FileReader();
-      var vm = this;
-
-      reader.onload = async (e) => {
-        if(type == 'profile') {
-          vm.image = e.target.result;
-        }
-        if(type == 'banner') {
-          vm.banner = e.target.result;
-        }
-      };
-      reader.readAsDataURL(file);
-    },
-    async submitForm() {
-      console.log("submitting form");
-      let isNew = true;
-      let authUserId = this.userProfile.id;
-
-      let usersRef = this.$firebaseGlobDB.collection("users");
-      let snapshot = await usersRef
-        .where("username", "==", this.userProfile.username)
-        .get();
-      if (snapshot.empty) {
-        isNew = true;
-      } else {
-        snapshot.forEach(function(doc) {
-          if (doc.id == authUserId) {
-            isNew = true;
-          } else {
-            isNew = false;
-          }
-        });
-      }
-
-      if (isNew) {
-        console.log(this.userProfile.username + " is available");
-        if (this.image) {
-          console.log(
-            `Avatar Image uploading for user[${this.userProfile.username}]`
-          );
-          const profileStorageRef = await this.$firebaseGlob
-            .storage()
-            .ref(`/users/profile/${authUserId}`)
-            .child("profilePicture")
-            .putString(this.image.split(",")[1], "base64", {
-              contentType: "image/jpg",
-            })
-            .then((snapshot) => {
-              return snapshot.ref.getDownloadURL().then(function(downloadURL) {
-                console.log(downloadURL);
-                return downloadURL;
-                console.log("File available at", downloadURL);
-              });
-            });
-
-          console.log(profileStorageRef);
-          this.userProfile.image = profileStorageRef;
-        }
-
-        if (this.banner) {
-          console.log(
-            `Banner Image uploading for user[${this.userProfile.username}]`
-          );
-          const bannerStorageRef = await this.$firebaseGlob
-            .storage()
-            .ref(`/users/profile/${authUserId}`)
-            .child("bannerImage")
-            .putString(this.banner.split(",")[1], "base64", {
-              contentType: "image/jpg",
-            })
-            .then((snapshot) => {
-              return snapshot.ref.getDownloadURL().then(function(downloadURL) {
-                console.log(downloadURL);
-                return downloadURL;
-                console.log("File available at", downloadURL);
-              });
-            });
-
-          console.log(bannerStorageRef);
-          this.userProfile.banner = bannerStorageRef;
-        }
-
-        firebaseUtilFuncs.updateData("users", this.userProfile);
-        this.$store.commit("auth/setAuthUser", this.userProfile);
-
-        Swal.fire({
-          title: "Good job!",
-          text: "You clicked the finish button!",
-          type: "success",
-          confirmButtonClass: "md-button md-success",
-          buttonsStyling: false,
-        });
-      } else {
-        console.log(this.userProfile.username + " is already registered");
-        Swal.fire({
-          title: "The username is not available.",
-          text:
-            "Sorry! The Username is already taken by another user. Please use another username.",
-          type: "danger",
-          confirmButtonClass: "md-button md-danger",
-          buttonsStyling: false,
-        });
-        return false;
-      }
-    },
+    }
   },
 };
 </script>
 <style lang="scss" scoped>
 .facebook {
   color: #3b5998!important
+}
+.md-card-avatar {
+  margin-top: -90px;
 }
 .twitter {
   color: #55acee!important
@@ -266,6 +149,12 @@ export default {
 .description {
   text-align: left;
   color: #333333
+}
+.md-social {
+  .md-icon {
+    margin: 20px;
+    font-size: 2rem!important;
+  }
 }
 .header-image {
   height: 250px;
