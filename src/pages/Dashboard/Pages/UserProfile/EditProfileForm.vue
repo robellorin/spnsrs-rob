@@ -319,6 +319,17 @@ export default {
     this.userProfile = { ...this.authUser, ...this.userProfile };
   },
   methods: {
+    notifyVue(message) {
+      var color = Math.floor(Math.random() * 4 + 1);
+      this.$notify({
+        timeout: 2500,
+        message: message,
+        icon: "add_alert",
+        horizontalAlign: 'right',
+        verticalAlign: 'top',
+        type: 'success'
+      });
+    },
     getClass: function(headerColor) {
       return "md-card-header-" + headerColor + "";
     },
@@ -427,14 +438,14 @@ export default {
 
         firebaseUtilFuncs.updateData("users", this.userProfile);
         this.$store.commit("auth/setAuthUser", this.userProfile);
-
-        Swal.fire({
-          title: "Good job!",
-          text: "You clicked the finish button!",
-          type: "success",
-          confirmButtonClass: "md-button md-success",
-          buttonsStyling: false,
-        });
+        this.notifyVue(`Successfully updated your profile.`);
+        // Swal.fire({
+        //   title: "Good job!",
+        //   text: "You clicked the finish button!",
+        //   type: "success",
+        //   confirmButtonClass: "md-button md-success",
+        //   buttonsStyling: false,
+        // });
       } else {
         console.log(this.userProfile.username + " is already registered");
         Swal.fire({

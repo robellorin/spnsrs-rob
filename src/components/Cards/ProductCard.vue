@@ -1,9 +1,10 @@
 <template>
   <md-card
-    class="md-card-product"
+    class="md-card-product md-with-hover ripple"
     @mouseleave.native="onMouseLeave"
     :data-count="hoverCount"
   >
+    <md-ripple :md-disabled="ripple">
     <md-card-header
       @mouseenter.native="onMouseOver"
       :data-header-animation="headerAnimation"
@@ -12,7 +13,7 @@
         { hinge: headerDown },
         { fadeInDown: fixedHeader }
       ]"
-      class="md-card-header-image animated"
+      class="card-image"
     >
       <slot name="imageHeader"></slot>
     </md-card-header>
@@ -46,6 +47,7 @@
     <md-card-actions md-alignment="right">
       <slot name="footer"></slot>
     </md-card-actions>
+  </md-ripple>
   </md-card>
 </template>
 
@@ -56,6 +58,10 @@ export default {
     headerAnimation: {
       type: String,
       default: "true"
+    },
+    ripple: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -96,4 +102,16 @@ export default {
 </script>
 
 <style lang="scss">
+.ripple {
+  overflow: hidden;
+}
+.card-image {
+  z-index: -1;
+  margin: 0;
+  border-radius: 0px;
+  padding: 0!important;
+  img {
+    border-radius: 0;
+  }
+}
 </style>

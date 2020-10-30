@@ -1,65 +1,70 @@
 <template>
   <ValidationObserver ref="form">
-    <form @submit.prevent="validate">
       <md-card class="md-card-profile">
-        <md-card-header
-          class="md-card-header-icon"
-          :class="getClass(headerColor)"
-        >
-          <div class="md-card-banner">
-            <div v-if="publicuser.banner">
-              <img :src="publicuser.banner" alt="banner image" />
-            </div>
-            <div v-else>
-              <img
-                src="https://source.unsplash.com/1600x350/?nature,water"
-                alt="banner image"
-              />
-            </div>
-          </div>
-          <div class="md-card-avatar">
-            <div class="picture">
-              <div v-if="publicuser.image">
-                <img :src="publicuser.image" />
+          <md-card-header
+            class="md-card-header-icon"
+            :class="getClass(headerColor)"
+          >
+            <div class="md-card-banner">
+              <div v-if="publicuser.banner">
+                <img :src="publicuser.banner" alt="banner image" />
               </div>
               <div v-else>
-                <img :src="avatar" title="" />
+                <img
+                  src="https://source.unsplash.com/1600x350/?nature,water"
+                  alt="banner image"
+                />
               </div>
             </div>
-          </div>
-          <h3 class="title">
-            {{publicuser.firstname + ' ' + publicuser.lastname + `(@${publicuser.username})`}}
-          </h3>
-          <p class="description">
-            {{publicuser.description}}
-          </p>
-          <div class="md-social">
-            <md-icon class="facebook"><i class="md-facebook fab fa-facebook"></i></md-icon>
-            <md-icon class="twitter"><i class="fab fa-twitter"></i></md-icon>
-            <md-icon class="instagram"><i class="fab fa-instagram"></i></md-icon>
-          </div>
-        </md-card-header>
-        <md-card-content>
-          <div class="md-layout">
-            <div
-              class="md-layout-item md-medium-size-50 md-xsmall-size-100 md-large-size-33 md-size-25"
-              v-for="banner in sortedBanners"
-              :key="banner.id"
-            >
-              <product-card header-animation="false">
-                <img class="img header-image" slot="imageHeader" :src="banner.image" />
-                <h4 slot="title" class="title">
-                  {{ banner.title }}
-                </h4>
-                <div slot="description" class="card-description">
-                  {{ banner.description }}
+            <div class="md-card-avatar">
+              <div class="picture">
+                <div v-if="publicuser.image">
+                  <img :src="publicuser.image" />
                 </div>
-              </product-card>
+                <div v-else>
+                  <img :src="avatar" title="" />
+                </div>
+              </div>
             </div>
-          </div>
-        </md-card-content>
+            <h3 class="title">
+              {{publicuser.firstname + ' ' + publicuser.lastname + `(@${publicuser.username})`}}
+            </h3>
+            <p class="description">
+              {{publicuser.description}}
+            </p>
+            <div class="social-buttons">
+              <md-button class="md-round md-just-icon md-facebook" @click="gotoUrl(publicuser.facebook)" v-show="publicuser.facebook && publicuser.facebook!=''">
+                <i class="fab fa-facebook"></i>
+              </md-button>
+              <md-button class="md-round md-just-icon md-twitter" @click="gotoUrl(publicuser.twitter)" v-show="publicuser.twitter && publicuser.twitter!=''">
+                <i class="fab fa-twitter"></i>
+              </md-button>
+              <md-button class="md-round md-just-icon md-instagram" @click="gotoUrl(publicuser.instagram)" v-show="publicuser.instagram && publicuser.instagram!=''">
+                <i class="fab fa-instagram"></i>
+              </md-button>
+            </div>
+          </md-card-header>
+          <md-card-content>
+            <div class="md-layout">
+              <div
+                class="md-layout-item md-medium-size-50 md-xsmall-size-100 md-large-size-33 md-size-25"
+                v-for="banner in sortedBanners"
+                :key="banner.id"
+                @click="gotoUrl(banner.url)"
+              >
+                <product-card header-animation="false" :ripple="false">
+                  <img class="img header-image" slot="imageHeader" :src="banner.image" />
+                  <h4 slot="title" class="title">
+                    {{ banner.title }}
+                  </h4>
+                  <div slot="description" class="card-description">
+                    {{ banner.description }}
+                  </div>
+                </product-card>
+              </div>
+            </div>
+          </md-card-content>
       </md-card>
-    </form>
   </ValidationObserver>
 </template>
 <script>
@@ -129,6 +134,11 @@ export default {
   methods: {
     getClass: function(headerColor) {
       return "md-card-header-" + headerColor + "";
+    },
+    gotoUrl: function(url) {
+      if (url) {
+        window.open(url);
+      }
     }
   },
 };
@@ -155,6 +165,9 @@ export default {
     margin: 20px;
     font-size: 2rem!important;
   }
+}
+.ripple {
+  overflow: hidden;
 }
 .header-image {
   height: 250px;
@@ -197,6 +210,11 @@ export default {
       border-color: #4caf50;
     }
   }
+}
+.md-icon-button{
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
 }
 .md-card-banner {
   margin: 0;

@@ -10,7 +10,7 @@
       <md-dialog-content>
         <ValidationObserver ref="form">
           <form @submit.prevent="validate">
-            <product-card header-animation="false" class="no-margin-bottom">
+            <product-card header-animation="false" class="no-margin-bottom" :ripple="true">
               <img
                 v-if="banner.image"
                 class="img"
@@ -42,6 +42,31 @@
                       >
                         <label>Title</label>
                         <md-input v-model="banner.title" type="text"></md-input>
+                        <slide-y-down-transition>
+                          <md-icon class="error" v-show="failed">close</md-icon>
+                        </slide-y-down-transition>
+                        <slide-y-down-transition>
+                          <md-icon class="success" v-show="passed"
+                            >done</md-icon
+                          >
+                        </slide-y-down-transition>
+                      </md-field>
+                    </ValidationProvider>
+                  </div>
+                  <div class="md-layout-item md-small-size-100 md-size-100">
+                    <ValidationProvider
+                      name="bannerurl"
+                      rules="required"
+                      v-slot="{ passed, failed }"
+                    >
+                      <md-field
+                        :class="[
+                          { 'md-error': failed },
+                          { 'md-valid': passed },
+                        ]"
+                      >
+                        <label>Banner url</label>
+                        <md-input v-model="banner.url" type="text"></md-input>
                         <slide-y-down-transition>
                           <md-icon class="error" v-show="failed">close</md-icon>
                         </slide-y-down-transition>
@@ -144,7 +169,6 @@ import Swal from "sweetalert2";
 extend("required", required);
 
 export default {
-  created() {},
   components: {
     ProductCard,
     SlideYDownTransition,
@@ -171,6 +195,8 @@ export default {
     editBanner: function(existingBanner) {
       if (existingBanner && existingBanner.id) {
         this.banner = {...this.editBanner}
+      } else {
+        this.banner = {image: null}
       }
     }
   },
@@ -312,6 +338,12 @@ $mobile: 576px;
 }
 .no-margin-bottom {
   margin-bottom: 0;
+  margin-top: 0;
+}
+
+.img {
+  max-height: 300px;
+  object-fit: cover;
 }
 
 .add-banner-dialog {
