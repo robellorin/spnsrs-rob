@@ -14,7 +14,7 @@
         >
         </sidebar-item>
         <sidebar-item
-            :link="{ name: 'Public profile', icon: 'image', path: '/pages/publicprofile' }"
+            :link="{ name: 'Public profile', icon: 'image', path: '/profile/publicprofile' }"
         ></sidebar-item>
         <sidebar-item
             :link="{ name: 'Buttons', path: '/components/buttons' }"
@@ -36,7 +36,7 @@
             :link="{ name: 'Lock Screen', path: '/lock' }"
           ></sidebar-item>
           <sidebar-item
-            :link="{ name: 'User Profile', path: '/pages/user' }"
+            :link="{ name: 'User Profile', path: '/profile/editprofile' }"
           ></sidebar-item>
         </sidebar-item>
         <sidebar-item :link="{ name: 'Components', icon: 'apps' }">

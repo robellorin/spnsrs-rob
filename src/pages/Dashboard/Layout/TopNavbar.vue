@@ -66,7 +66,7 @@
               </a>
             </li>
 
-            <md-list-item href="#/pages/user">
+            <md-list-item href="#/profile/editprofile">
               <i class="material-icons">person</i>
               <p class="hidden-lg hidden-md">Profile</p>
             </md-list-item>

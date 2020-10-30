@@ -29,7 +29,7 @@
       </drop-down>
     </li>
     <li>
-      <router-link to="/pages/user" data-toggle="dropdown" class="dropdown-toggle"
+      <router-link to="/profile/editprofile" data-toggle="dropdown" class="dropdown-toggle"
         ><i class="material-icons">person</i>
         <p>Account</p>
       </router-link>

@@ -21,15 +21,15 @@
           <ul class="nav">
             <slot>
               <li>
-                <router-link to="/pages/user">
+                <router-link to="/profile/editprofile">
                   <span class="sidebar-mini">EP</span>
                   <span class="sidebar-normal">Edit Profile</span>
                 </router-link>
               </li>
               <li>
-                <router-link to="/pages/profilebuild">
+                <router-link to="/profile/profilesetup">
                   <span class="sidebar-mini">PS</span>
-                  <span class="sidebar-normal">Profile Settings</span>
+                  <span class="sidebar-normal">Profile Setup</span>
                 </router-link>
               </li>
             </slot>

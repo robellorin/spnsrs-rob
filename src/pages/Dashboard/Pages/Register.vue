@@ -114,7 +114,7 @@ export default {
             id: newUser.id,
             email: data.user.email
           })
-          this.$router.replace({ name: "Complete profile" });
+          this.$router.replace({ name: "Profile Setup" });
         })
         .catch(err => {
           console.log(err)
@@ -143,7 +143,7 @@ export default {
             })
           })
         }
-        this.$router.replace({ name: "Complete profile" });
+        this.$router.replace({ name: "Profile Setup" });
       }).catch(function(error) {
         console.log("social login failed")
         console.log(error)

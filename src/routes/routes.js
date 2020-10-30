@@ -26,7 +26,7 @@ import Typography from "@/pages/Dashboard/Components/Typography.vue";
 import RegularForms from "@/pages/Dashboard/Forms/RegularForms.vue";
 import ExtendedForms from "@/pages/Dashboard/Forms/ExtendedForms.vue";
 import ValidationForms from "@/pages/Dashboard/Forms/ValidationForms.vue";
-import Wizard from "@/pages/Dashboard/Forms/Wizard.vue";
+import ProfileCompleteWizard from "@/pages/Dashboard/UserProfile/ProfileCompleteWizard.vue";
 
 // TableList pages
 import RegularTables from "@/pages/Dashboard/Tables/RegularTables.vue";
@@ -111,7 +111,7 @@ let formsMenu = {
     {
       path: "wizard",
       name: "Wizard",
-      components: { default: Wizard }
+      components: { default: ProfileCompleteWizard }
     }
   ]
 };
@@ -181,19 +181,33 @@ let pagesMenu = {
       components: { default: User }
     },
     {
+      path: "timeline",
+      name: "Timeline Page",
+      components: { default: TimeLine }
+    }
+  ]
+};
+
+let profileMenu = {
+  path: "/profile",
+  component: DashboardLayout,
+  name: "Profiles",
+  redirect: "/profile/editprofile",
+  children: [
+    {
+      path: "editprofile",
+      name: "Edit Profile",
+      components: { default: User }
+    },
+    {
       path: "publicprofile",
       name: "PublicUserProfile",
       components: { default: PublicUser }
     },
     {
-      path: "timeline",
-      name: "Timeline Page",
-      components: { default: TimeLine }
-    },
-    {
-      path: "profilebuild",
-      name: "Complete profile",
-      components: { default: Wizard }
+      path: "profilesetup",
+      name: "Profile Setup",
+      components: { default: ProfileCompleteWizard }
     }
   ]
 };
@@ -236,6 +250,7 @@ const routes = [
   tablesMenu,
   mapsMenu,
   pagesMenu,
+  profileMenu,
   authPages,
   {
     path: "/",

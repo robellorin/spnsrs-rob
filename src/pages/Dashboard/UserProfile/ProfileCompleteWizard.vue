@@ -31,7 +31,7 @@
 
         <wizard-tab :before-change="() => validateStep('step3')">
           <template slot="label">
-            Complete Profile
+            Profile Setup
           </template>
           <complete-profile-form
             ref="step3"
@@ -44,9 +44,9 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
-import CompleteProfileForm from "./Wizard/CompleteProfileForm.vue";
-import ProfileTypeForm from "./Wizard/ProfileTypeForm.vue";
-import ProfileInfoForm from "./Wizard/ProfileInfoForm.vue";
+import CompleteProfileForm from "./ProfileCompleteWizardPanels/CompleteProfileForm.vue";
+import ProfileTypeForm from "./ProfileCompleteWizardPanels/ProfileTypeForm.vue";
+import ProfileInfoForm from "./ProfileCompleteWizardPanels/ProfileInfoForm.vue";
 import Swal from "sweetalert2";
 import { SimpleWizard, WizardTab } from "@/components";
 import firebaseUtilFuncs from "@/utils/firebase/firebaseUtil.js";

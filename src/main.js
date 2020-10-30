@@ -56,16 +56,16 @@ router.beforeEach((to, from, next) => {
       if (store.getters["auth/getAuthUser"].profilecompleted === true) {
         next({ name: "Dashboard" });
       } else {
-        next({ name: "Complete profile" });
+        next({ name: "Profile Setup" });
       }
     } else {
       if (
         store.getters["auth/getAuthUser"].profilecompleted === true ||
-        to.name === "Complete profile"
+        to.name === "Profile Setup"
       ) {
         next();
       } else {
-        next({ name: "Complete profile" });
+        next({ name: "Profile Setup" });
       }
     }
   } else {
