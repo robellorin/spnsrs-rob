@@ -122,6 +122,7 @@ export default {
     this.banners = await firebaseDB
       .collection("banners")
       .where("userId", "==", this.authUser.id)
+      .where("active", "==", true)
       .get()
       .then((querySnapshot) => {
         let updatedBanners = [];
