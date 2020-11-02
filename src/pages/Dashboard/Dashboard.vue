@@ -31,32 +31,39 @@
             </md-button>
 
             <md-menu-content  class="md-menu">
-              <!-- <md-ripple> -->
-                <md-menu-item @click="editBanner(banner.id)">
-                  <div>Edit</div>
-                  <md-icon>edit</md-icon>
-                </md-menu-item>
-              <!-- </md-ripple> -->
-              <!-- <md-ripple> -->
-                <md-menu-item @click="removeBanner( $event, banner.id)">
-                  <div>Delete</div>
-                  <md-icon>delete</md-icon>
-                </md-menu-item>
-              <!-- </md-ripple> -->
-                <md-menu-item @click="shareBanner( $event, banner.id)">
-                  <div>Share</div>
-                  <md-icon>share</md-icon>
-                </md-menu-item>
+              <md-menu-item @click="editBanner(banner.id)">
+                <div>Edit</div>
+                <md-icon>edit</md-icon>
+              </md-menu-item>
+              <md-menu-item @click="removeBanner( $event, banner.id)">
+                <div>Delete</div>
+                <md-icon>delete</md-icon>
+              </md-menu-item>
+              <md-menu-item @click="shareBannerClick(banner)">
+                <div>Share</div>
+                <md-icon>share</md-icon>
+              </md-menu-item>
             </md-menu-content>
           </md-menu>
         </template>
       </product-card>
     </div>
+    <modal v-if="showDialog" @close="showDialog = false">
+      <template slot="body">
+        <banner-users/>
+      </template>
+
+      <template slot="footer">
+        <md-button class="md-primary md-round" @click="closeMdal">Close</md-button>
+      </template>
+    </modal>
   </div>
 </template>
 
 <script>
 import firebaseUtilFuncs, { firebaseDB } from "@/utils/firebase/firebaseUtil.js";
+import BannerUsersTable from "./Components/BannerUsersTable.vue";
+import {Modal} from "@/components";
 import Swal from "sweetalert2";
 import { ProductCard } from "@/components";
 import { mapGetters } from "vuex";
@@ -64,10 +71,13 @@ import { mapGetters } from "vuex";
 export default {
   components: {
     ProductCard,
+    Modal,
+    'banner-users': BannerUsersTable,
   },
   data() {
     return {
-      
+      shareBanner: null,
+      showDialog: false,
     };
   },
   computed: {
@@ -119,8 +129,9 @@ export default {
       const selectedBanner = this.banners.find((banner => banner.id == id));
       this.$store.commit('banners/setEditableBanner', selectedBanner);
     },
-    shareBanner(id) {
-      alert('Share this banner')
+    shareBannerClick(banner) {
+      this.showDialog = true;
+      this.shareBanner = banner;
     },
     removeBanner(e, id) {
         Swal.fire({
@@ -151,6 +162,9 @@ export default {
     updateStatus(e,id){
       firebaseDB.collection('banners').doc(id).update({active: e});
       this.notifyVue(`Banner status is ${e ? 'active' : 'inactive'}`);
+    },
+    closeMdal() {
+      this.showDialog = false;
     }
   }
 };
@@ -169,6 +183,7 @@ export default {
       min-height: 350px;
     }
   }
+
   .md-menu {
     overflow: hidden;
   }

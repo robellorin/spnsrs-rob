@@ -7,7 +7,7 @@
             <slot name="header"></slot>
           </div>
 
-          <div class="modal-body text-center">
+          <div class="modal-body">
             <slot name="body"></slot>
           </div>
 
@@ -47,6 +47,14 @@ export default {
 
 .modal-leave-active {
   opacity: 0;
+}
+
+.modal-container {
+  max-width: 700px;
+}
+
+.modal-body {
+  padding: 0;
 }
 
 .modal-enter .modal-container,
