@@ -19,7 +19,13 @@
         <sidebar-item
             :link="{ name: 'Buttons', path: '/components/buttons' }"
           ></sidebar-item>
-        <!-- <sidebar-item :link="{ name: 'Pages', icon: 'image' }">
+        <sidebar-item
+          :link="{ name: 'Icons', path: '/components/icons' }"
+        ></sidebar-item>
+        <sidebar-item
+          :link="{ name: 'Typography', path: '/components/typography' }"
+        ></sidebar-item>
+        <sidebar-item :link="{ name: 'Pages', icon: 'image' }">
           <sidebar-item
             :link="{ name: 'Login', path: '/login' }"
           ></sidebar-item>
@@ -106,7 +112,7 @@
         ></sidebar-item>
         <sidebar-item
           :link="{ name: 'Calendar', icon: 'date_range', path: '/calendar' }"
-        ></sidebar-item> -->
+        ></sidebar-item>
       </template>
     </side-bar>
     <div class="main-panel">
