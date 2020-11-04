@@ -244,7 +244,6 @@ export default {
           });
           return internalSharedInfuluencers;
         });
-        console.log(sharedInfluencersList)
         return sharedInfluencersList;
       });
   },
@@ -275,6 +274,11 @@ export default {
           bannerId: this.banner.id
           }
         )
+        let name = this.searchedUser.firstname + ' ' + this.searchedUser.lastname;
+        this.sharedUsers.push({
+          name: name,
+          email: this.searchedUser.email
+        })
         this.notifyVue(`Shared with ${this.searchedUser.username}.`)
       } else {
         this.notifyVue("The banner is already shared with this user.")
