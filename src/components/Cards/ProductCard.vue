@@ -44,7 +44,7 @@
       <slot name="description"></slot>
     </md-card-content>
 
-    <md-card-actions md-alignment="right">
+    <md-card-actions md-alignment="space-between">
       <slot name="footer"></slot>
     </md-card-actions>
   </md-ripple>

@@ -14,6 +14,10 @@ export function setBanners(state, banners) {
   state.banners = banners;
 }
 
+export function setSharedBanners(state, banners) {
+  state.sharedBanners = banners;
+}
+
 export function removeBanner(state, bannerId) {
   state.banners = state.banners.filter(banner => banner.id !== bannerId);
 }
@@ -26,4 +30,10 @@ export function removeEditableBanner(state) {
   state.editableBanner = {
     image: null
   };
+}
+
+export function clearBanners(state) {
+  state.banners = [];
+  state.sharedBanners = [];
+  state.editableBanner = {};
 }

@@ -62,6 +62,22 @@
                   </div>
                 </product-card>
               </div>
+              <div
+                class="md-layout-item md-medium-size-50 md-xsmall-size-100 md-large-size-33 md-size-25"
+                v-for="banner in sortedSharedBanners"
+                :key="banner.id"
+                @click="gotoUrl(banner.url)"
+              >
+                <product-card header-animation="false" :ripple="false">
+                  <img class="img header-image" slot="imageHeader" :src="banner.image" />
+                  <h4 slot="title" class="title">
+                    {{ banner.title }}
+                  </h4>
+                  <div slot="description" class="card-description">
+                    {{ banner.description }}
+                  </div>
+                </product-card>
+              </div>
             </div>
           </md-card-content>
       </md-card>
@@ -107,6 +123,16 @@ export default {
       }
       return this.banners.slice().sort(priority);
     },
+    sortedSharedBanners: function() {
+      function priority(a, b) {
+        if (a.priority == "Low") return 1;
+        if (a.priority == "High") return -1;
+        if (b.priority == "Low") return -1;
+        if (b.priority == "High") return 1;
+        return 0;
+      }
+      return this.sharedBanners.slice().sort(priority);
+    },
     ...mapGetters({
       authUser: "auth/getAuthUser"
     }),
@@ -114,12 +140,13 @@ export default {
   data() {
     return {
       publicuser: {},
-      banners: []
+      banners: [],
+      sharedBanners: [],
     };
   },
   async created() {
     this.publicuser = { ...this.authUser };
-    this.banners = await firebaseDB
+    let banners = await firebaseDB
       .collection("banners")
       .where("userId", "==", this.authUser.id)
       .where("active", "==", true)
@@ -131,6 +158,37 @@ export default {
         });
         return updatedBanners;
       });
+
+    let sharedBanners = await firebaseDB
+      .collection("shares")
+      .where("influencerId", "==", this.authUser.id)
+      .get()
+      .then(async (snapshot1) => {
+        let bannerIdList = [];
+        snapshot1.forEach((doc) => {
+          bannerIdList.push(doc.data().bannerId);
+        });
+        let sharedBannersList = [];
+        if (bannerIdList.length==0) {
+          return sharedBannersList;
+        }
+        sharedBannersList = await firebaseDB
+        .collection("banners")
+        .where("id", "in", bannerIdList)
+        .where("published", "==", true)
+        .get()
+        .then((snapshot2) => {
+          let internalBanners = [];
+          snapshot2.forEach((doc) => {
+            internalBanners.push({ id: doc.id, ...doc.data() });
+          });
+          return internalBanners;
+        });
+        return sharedBannersList;
+      });
+
+      this.banners = banners;
+      this.sharedBanners = sharedBanners
   },
   methods: {
     getClass: function(headerColor) {
@@ -167,6 +225,10 @@ export default {
     font-size: 2rem!important;
   }
 }
+.md-card {
+  padding: 10px;
+  border: 1px solid lightgray;
+}
 .ripple {
   overflow: hidden;
 }
@@ -175,7 +237,8 @@ export default {
   object-fit: cover;
 
   @media screen and (min-width: 1400px) {
-    min-height: 350px;
+    min-height: 100px;
+    max-height: 150px;
   }
 }
 .md-card-header {

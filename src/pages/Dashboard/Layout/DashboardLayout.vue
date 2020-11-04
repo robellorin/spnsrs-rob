@@ -16,7 +16,7 @@
         <sidebar-item
             :link="{ name: 'Public profile', icon: 'image', path: '/profile/publicprofile' }"
         ></sidebar-item>
-        <sidebar-item
+        <!-- <sidebar-item
             :link="{ name: 'Buttons', path: '/components/buttons' }"
           ></sidebar-item>
         <sidebar-item
@@ -112,7 +112,7 @@
         ></sidebar-item>
         <sidebar-item
           :link="{ name: 'Calendar', icon: 'date_range', path: '/calendar' }"
-        ></sidebar-item>
+        ></sidebar-item> -->
       </template>
     </side-bar>
     <div class="main-panel">
@@ -143,6 +143,7 @@
 </template>
 <script>
 /* eslint-disable no-new */
+import firebaseUtilFuncs, { firebaseDB } from "@/utils/firebase/firebaseUtil.js";
 import PerfectScrollbar from "perfect-scrollbar";
 import "perfect-scrollbar/css/perfect-scrollbar.css";
 
@@ -184,6 +185,7 @@ import FixedPlugin from "../../FixedPlugin.vue";
 import FixedAddBanner from "../../FixedAddBanner.vue";
 import UserMenu from "./Extra/UserMenu.vue";
 import { ZoomCenterTransition } from "vue2-transitions";
+import { mapGetters } from "vuex";
 
 export default {
   components: {
@@ -226,7 +228,56 @@ export default {
     sidebarMini() {
       this.minimizeSidebar();
     }
-  }
+  },
+  computed: {
+    ...mapGetters({
+      authUser: "auth/getAuthUser",
+      banners: "banners/getBanners",
+    }),
+  },
+  async created() {
+      const banners = await firebaseDB
+      .collection("banners")
+      .where("userId", "==", this.authUser.id)
+      .get()
+      .then((querySnapshot) => {
+        let updatedBanners = [];
+        querySnapshot.forEach((doc) => {
+          updatedBanners.push({ id: doc.id, ...doc.data() });
+        });
+        return updatedBanners;
+      });
+      this.$store.commit('banners/setBanners', banners);
+
+      const sharedBanners = await firebaseDB
+      .collection("shares")
+      .where("influencerId", "==", this.authUser.id)
+      .get()
+      .then(async (snapshot1) => {
+        let bannerIdList = [];
+        snapshot1.forEach((doc) => {
+          bannerIdList.push(doc.data().bannerId);
+        });
+        let sharedBannersList = [];
+        if (bannerIdList.length==0) {
+          return sharedBannersList;
+        }
+        sharedBannersList = await firebaseDB
+        .collection("banners")
+        .where("id", "in", bannerIdList)
+        .where("published", "==", true)
+        .get()
+        .then((snapshot2) => {
+          let internalBanners = [];
+          snapshot2.forEach((doc) => {
+            internalBanners.push({ id: doc.id, ...doc.data() });
+          });
+          return internalBanners;
+        });
+        return sharedBannersList;
+      });
+      this.$store.commit('banners/setSharedBanners', sharedBanners);
+  },
 };
 </script>
 <style lang="scss">

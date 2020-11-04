@@ -6,7 +6,7 @@
           <div class="card-icon">
             <md-icon>assignment</md-icon>
           </div>
-          <h4 class="title">Share Banner</h4>
+          <h4 class="title">Share Banner - {{banner.title}}</h4>
         </md-card-header>
         <md-card-content>
           <div>
@@ -68,19 +68,7 @@
               <md-table-cell md-label="Email" md-align="left" md-sort-by="email">{{
                 item.email
               }}</md-table-cell>
-              <md-table-cell md-label="Actions">
-                <md-button
-                  class="md-just-icon md-info md-simple"
-                  @click.native="handleLike(item)"
-                >
-                  <md-icon>favorite</md-icon>
-                </md-button>
-                <md-button
-                  class="md-just-icon md-warning md-simple"
-                  @click.native="handleEdit(item)"
-                >
-                  <md-icon>dvr</md-icon>
-                </md-button>
+              <md-table-cell md-label="Actions" class="text-center">
                 <md-button
                   class="md-just-icon md-danger md-simple"
                   @click.native="handleDelete(item)"
@@ -90,25 +78,6 @@
               </md-table-cell>
             </md-table-row>
           </md-table>
-          <div class="footer-table md-table">
-            <table>
-              <tfoot>
-                <tr>
-                  <th
-                    v-for="item in footerTable"
-                    :key="item.name"
-                    class="md-table-head"
-                  >
-                    <div class="md-table-head-container md-ripple md-disabled">
-                      <div class="md-table-head-label">
-                        {{ item }}
-                      </div>
-                    </div>
-                  </th>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
         </md-card-content>
         <md-card-actions md-alignment="space-between">
           <div class="">
@@ -131,23 +100,56 @@
 
 <script>
 import { Pagination } from "@/components";
+import firebaseUtilFuncs from "@/utils/firebase/firebaseUtil.js";
 import { SlideYDownTransition } from "vue2-transitions";
-import users from "./users";
 import Fuse from "fuse.js";
 import Swal from "sweetalert2";
+import { mapGetters } from "vuex";
 
 export default {
   name: "banner-users",
+  props: {
+    banner: {
+      type: Object,
+      default: () => {
+        return {};
+      }
+    }
+  },
   components: {
     Pagination,
     SlideYDownTransition,
+  },
+  data() {
+    return {
+      shareuser: "",
+      sharedUsers: [],
+      searchedUser: null,
+      buttontext: "",
+      currentSort: "name",
+      currentSortOrder: "asc",
+      pagination: {
+        perPage: 5,
+        currentPage: 1,
+        perPageOptions: [5, 10, 25, 50],
+        total: 0
+      },
+      footerTable: ["Name", "Email", "Actions"],
+      searchQuery: "",
+      propsToSearch: ["name", "email", "age"],
+      searchedData: [],
+      fuseSearch: null
+    };
   },
   computed: {
     /***
      * Returns a page from the searched data or the whole data. Search is performed in the watch section below
      */
+    ...mapGetters({
+      authUser: "auth/getAuthUser",
+    }),
     queriedData() {
-      let result = this.tableData;
+      let result = this.sharedUsers;
       if (this.searchedData.length > 0) {
         result = this.searchedData;
       }
@@ -166,33 +168,117 @@ export default {
     total() {
       return this.searchedData.length > 0
         ? this.searchedData.length
-        : this.tableData.length;
+        : this.sharedUsers.length;
     }
   },
-  data() {
-    return {
-      shareuser: "",
-      searchedUser: null,
-      buttontext: "",
-      currentSort: "name",
-      currentSortOrder: "asc",
-      pagination: {
-        perPage: 5,
-        currentPage: 1,
-        perPageOptions: [5, 10, 25, 50],
-        total: 0
-      },
-      footerTable: ["Name", "Email", "Actions"],
-      searchQuery: "",
-      propsToSearch: ["name", "email", "age"],
-      tableData: users,
-      searchedData: [],
-      fuseSearch: null
-    };
+  watch: {
+    /**
+     * Searches through the table data by a given query.
+     * NOTE: If you have a lot of data, it's recommended to do the search on the Server Side and only display the results here.
+     * @param value of the query
+     */
+    searchQuery(value) {
+      let result = this.sharedUsers;
+      if (value !== "") {
+        result = this.fuseSearch.search(this.searchQuery);
+      }
+      this.searchedData = result;
+    },
+    shareuser: async function(val) {
+      let usersRef = this.$firebaseGlobDB.collection("users");
+      let snapshot1 = await usersRef
+        .where("username", "==", this.shareuser)
+        .where("influencer", "==", true)
+        .get();
+      
+      let snapshot2 = await usersRef
+        .where("email", "==", this.shareuser)
+        .where("influencer", "==", true)
+        .get();
+
+      if (!snapshot1.empty) {
+        snapshot1.forEach((doc) => {
+          if (doc.id != this.authUser.id){
+            this.searchedUser = {...doc.data()}
+          }
+        });
+      } else {
+        this.searchedUser = null
+      }
+
+      if (!snapshot2.empty && !this.searchedUser) {
+        snapshot2.forEach((doc) => {
+          if (doc.id != this.authUser.id){
+            this.searchedUser = {...doc.data()}
+          }
+        });
+      }
+    }
+  },
+  async created() {
+    this.sharedUsers = await this.$firebaseGlobDB
+      .collection("shares")
+      .where("bannerId", "==", this.banner.id)
+      .where("sponsorId", "==", this.authUser.id)
+      .get()
+      .then(async (sharesSnapshot) => {
+        let influencerIdList = [];
+        sharesSnapshot.forEach((doc) => {
+          influencerIdList.push(doc.data().influencerId);
+        });
+        let sharedInfluencersList = [];
+        if (influencerIdList.length==0) {
+          return sharedInfluencersList;
+        }
+        sharedInfluencersList = await this.$firebaseGlobDB
+        .collection("users")
+        .where("id", "in", influencerIdList)
+        .get()
+        .then((snapshot2) => {
+          let internalSharedInfuluencers = [];
+          snapshot2.forEach((doc) => {
+            let docData = doc.data();
+            let name = docData.firstname + ' ' + docData.lastname;
+            name = name.trim();
+            internalSharedInfuluencers.push({ id: doc.id, name: name, ...doc.data() });
+          });
+          return internalSharedInfuluencers;
+        });
+        console.log(sharedInfluencersList)
+        return sharedInfluencersList;
+      });
   },
   methods: {
-    shareBanner() {
-      alert("Banner is shared")
+    notifyVue(message) {
+      var color = Math.floor(Math.random() * 4 + 1);
+      this.$notify({
+        timeout: 2500,
+        message: message,
+        icon: "add_alert",
+        horizontalAlign: 'right',
+        verticalAlign: 'top',
+        type: 'success'
+      });
+    },
+    async shareBanner() {
+      let sharesRef = this.$firebaseGlobDB.collection("shares");
+      let snapshot = await sharesRef
+        .where("sponsorId", "==", this.authUser.id)
+        .where("influencerId", "==", this.searchedUser.id)
+        .where("bannerId", "==", this.banner.id)
+        .get();
+
+      if (snapshot.empty) {
+        var newShare = await firebaseUtilFuncs.createData('shares', {
+          sponsorId: this.authUser.id,
+          influencerId: this.searchedUser.id,
+          bannerId: this.banner.id
+          }
+        )
+        this.notifyVue(`Shared with ${this.searchedUser.username}.`)
+      } else {
+        this.notifyVue("The banner is already shared with this user.")
+      }
     },
     clearUserInput() {
       this.searchedUser = null;
@@ -200,7 +286,7 @@ export default {
     },
     getButtonText() {
       if (this.searchedUser) {
-        this.buttontext = `Share this banner to ${this.shareuser}.`
+        this.buttontext = `Share this banner to ${this.searchedUser.username}(${this.searchedUser.email}).`
       } else {
         this.buttontext = "Select a username or email to share this banner"
       }
@@ -231,72 +317,62 @@ export default {
       });
     },
     handleDelete(item) {
-      Swal.fire({
-        title: "Are you sure?",
-        text: `You won't be able to revert this!`,
-        type: "warning",
-        showCancelButton: true,
-        confirmButtonClass: "md-button md-success btn-fill",
-        cancelButtonClass: "md-button md-danger btn-fill",
-        confirmButtonText: "Yes, delete it!",
-        buttonsStyling: false
-      }).then(result => {
-        if (result.value) {
-          this.deleteRow(item);
-          Swal.fire({
-            title: "Deleted!",
-            text: `You deleted ${item.name}`,
-            type: "success",
-            confirmButtonClass: "md-button md-success btn-fill",
-            buttonsStyling: false
-          });
-        }
-      });
+      this.deleteRow(item);
+      // Swal.fire({
+      //   title: "Are you sure?",
+      //   text: `You won't be able to revert this!`,
+      //   type: "warning",
+      //   showCancelButton: true,
+      //   confirmButtonClass: "md-button md-success btn-fill",
+      //   cancelButtonClass: "md-button md-danger btn-fill",
+      //   confirmButtonText: "Yes, delete it!",
+      //   buttonsStyling: false
+      // }).then(result => {
+      //   if (result.value) {
+      //     this.deleteRow(item);
+      //     Swal.fire({
+      //       title: "Deleted!",
+      //       text: `You deleted ${item.name}`,
+      //       type: "success",
+      //       confirmButtonClass: "md-button md-success btn-fill",
+      //       buttonsStyling: false
+      //     });
+      //   }
+      // });
     },
-    deleteRow(item) {
-      let indexToDelete = this.tableData.findIndex(
-        tableRow => tableRow.id === item.id
-      );
-      if (indexToDelete >= 0) {
-        this.tableData.splice(indexToDelete, 1);
+    async deleteRow(item) {
+      let removeDocId = await this.$firebaseGlobDB
+        .collection("shares")
+        .where("bannerId", "==", this.banner.id)
+        .where("sponsorId", "==", this.authUser.id)
+        .where("influencerId", "==", item.id)
+        .get()
+        .then(async (sharesSnapshot) => {
+          let docId = null;
+          sharesSnapshot.forEach((doc) => {
+            docId = doc.id
+          });
+          return docId;
+        });
+      if (removeDocId) {
+        await firebaseUtilFuncs.deleteData('shares', removeDocId);
+        let indexToDelete = this.sharedUsers.findIndex(
+          tableRow => tableRow.id === item.id
+        );
+        if (indexToDelete >= 0) {
+          this.sharedUsers.splice(indexToDelete, 1);
+        }
       }
     }
   },
   mounted() {
     // Fuse search initialization.
-    this.fuseSearch = new Fuse(this.tableData, {
+    this.fuseSearch = new Fuse(this.sharedUsers, {
       keys: ["name", "email"],
       threshold: 0.3
     });
   },
-  watch: {
-    /**
-     * Searches through the table data by a given query.
-     * NOTE: If you have a lot of data, it's recommended to do the search on the Server Side and only display the results here.
-     * @param value of the query
-     */
-    searchQuery(value) {
-      let result = this.tableData;
-      if (value !== "") {
-        result = this.fuseSearch.search(this.searchQuery);
-      }
-      this.searchedData = result;
-    },
-    shareuser: async function(val) {
-      let usersRef = this.$firebaseGlobDB.collection("users");
-      let snapshot = await usersRef
-        .where("username", "==", this.shareuser)
-        .get();
-
-      if (!snapshot.empty) {
-        snapshot.forEach((doc) => {
-          this.searchedUser = doc
-        });
-      } else {
-        this.searchedUser = null
-      }
-    }
-  }
+  
 };
 </script>
 

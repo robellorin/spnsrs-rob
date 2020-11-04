@@ -114,6 +114,7 @@ export default {
         .then(() => {
           localStorage.setItem("isLoggedIn", false);
           this.$store.commit('auth/clearAuthUser');
+          this.$store.commit('banners/clearBanners');
           this.$router.replace({ name: "Login" });
         });
     }

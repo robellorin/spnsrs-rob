@@ -1,58 +1,46 @@
 <template>
   <div class="md-layout">
+    <div class="md-layout-item md-group md-size-100">
+      <md-button class="md-round md-success" @click="bannerTypesButtonClick('all')" :class="{activeBtn: activeBtn=='all'}">All Banners</md-button>
+      <md-button class="md-round md-success" @click="bannerTypesButtonClick('my')" :class="{activeBtn: activeBtn=='my'}">My Banners</md-button>
+      <md-button class="md-round md-success" @click="bannerTypesButtonClick('shared')" :class="{activeBtn: activeBtn=='shared'}">Shared Banners</md-button>
+    </div>
     <div
       class="md-layout-item md-medium-size-50 md-xsmall-size-100 md-large-size-33 md-size-25"
       v-for="banner in sortedBanners"
+      v-show="activeBtn=='my' || activeBtn=='all'"
       :key="banner.id"
     >
-      <product-card header-animation="false">
-        <img class="img header-image" slot="imageHeader" :src="banner.image" />
-        <h4 slot="title" class="title">
-          {{ banner.title }}
-        </h4>
-        <div slot="description" class="card-description">
-          {{ banner.description }}
-        </div>
-        <template slot="footer">
-          <div
-            class="md-layout-item md-small-size-100 md-size-33"
-          >
-            <md-switch v-model="banner.active" @change="updateStatus($event, banner.id)">Active</md-switch>
-          </div>
-          
-          <md-menu md-direction="top-start" md-close-on-click class="md-menu">
-            <md-button
-              md-menu-trigger
-              class="md-round md-just-icon md-icon-button md-primary"
-            >
-              <i class="material-icons text_align-center"
-                >more_vert</i
-              >
-            </md-button>
-
-            <md-menu-content  class="md-menu">
-              <md-menu-item @click="editBanner(banner.id)">
-                <div>Edit</div>
-                <md-icon>edit</md-icon>
-              </md-menu-item>
-              <md-menu-item @click="removeBanner( $event, banner.id)">
-                <div>Delete</div>
-                <md-icon>delete</md-icon>
-              </md-menu-item>
-              <md-menu-item @click="shareBannerClick(banner)">
-                <div>Share</div>
-                <md-icon>share</md-icon>
-              </md-menu-item>
-            </md-menu-content>
-          </md-menu>
-        </template>
-      </product-card>
+      <dashboard-card 
+        :banner="banner" 
+        :updateStatus="updateStatus" 
+        :editBanner="editBanner"
+        :removeBanner="removeBanner"
+        :shareBannerClick="shareBannerClick"
+        :shared="false"
+      >
+      </dashboard-card>
+    </div>
+    <div
+      class="md-layout-item md-medium-size-50 md-xsmall-size-100 md-large-size-33 md-size-25"
+      v-for="banner in sortedSharedBanners"
+      v-show="activeBtn=='shared' || activeBtn=='all'"
+      :key="banner.id"
+    >
+      <dashboard-card 
+        :banner="banner" 
+        :updateStatus="updateStatus" 
+        :editBanner="editBanner"
+        :removeBanner="removeBanner"
+        :shareBannerClick="shareBannerClick"
+        :shared="true"
+      >
+      </dashboard-card>
     </div>
     <modal v-if="showDialog" @close="showDialog = false">
       <template slot="body">
-        <banner-users/>
+        <banner-users :banner="shareBanner"/>
       </template>
-
       <template slot="footer">
         <md-button class="md-primary md-round" @click="closeMdal">Close</md-button>
       </template>
@@ -63,14 +51,14 @@
 <script>
 import firebaseUtilFuncs, { firebaseDB } from "@/utils/firebase/firebaseUtil.js";
 import BannerUsersTable from "./Components/BannerUsersTable.vue";
+import DashboardCard from "./Components/DashboardCard.vue";
 import {Modal} from "@/components";
 import Swal from "sweetalert2";
-import { ProductCard } from "@/components";
 import { mapGetters } from "vuex";
 
 export default {
   components: {
-    ProductCard,
+    DashboardCard,
     Modal,
     'banner-users': BannerUsersTable,
   },
@@ -78,6 +66,7 @@ export default {
     return {
       shareBanner: null,
       showDialog: false,
+      activeBtn: 'all',
     };
   },
   computed: {
@@ -92,28 +81,31 @@ export default {
 
       return this.banners.slice().sort(priority);
     },
+    sortedSharedBanners: function() {
+      function priority(a, b) {
+        if (a.priority == "Low") return 1;
+        if (a.priority == "High") return -1;
+        if (b.priority == "Low") return -1;
+        if (b.priority == "High") return 1;
+        return 0;
+      }
+
+      return this.sharedBanners.slice().sort(priority);
+    },
     ...mapGetters({
       authUser: "auth/getAuthUser",
       banners: "banners/getBanners",
+      sharedBanners: "banners/getSharedBanners",
       editableBanner: "banners/getEditableBanner"
     }),
   },
-  async created() {
-      const banners = await firebaseDB
-      .collection("banners")
-      .where("userId", "==", this.authUser.id)
-      .get()
-      .then((querySnapshot) => {
-        let updatedBanners = [];
-        querySnapshot.forEach((doc) => {
-          updatedBanners.push({ id: doc.id, ...doc.data() });
-        });
-        return updatedBanners;
-      });
-
-      this.$store.commit('banners/setBanners', banners);
-  },
   methods: {
+    bannerTypesButtonClick(type) {
+      this.activeBtn = type;
+      if (type==='my') {
+
+      }
+    },
     notifyVue(message) {
       var color = Math.floor(Math.random() * 4 + 1);
       this.$notify({
@@ -130,8 +122,8 @@ export default {
       this.$store.commit('banners/setEditableBanner', selectedBanner);
     },
     shareBannerClick(banner) {
-      this.showDialog = true;
       this.shareBanner = banner;
+      this.showDialog = true;
     },
     removeBanner(e, id) {
         Swal.fire({
@@ -159,9 +151,14 @@ export default {
           }
         });
     },
-    updateStatus(e,id){
-      firebaseDB.collection('banners').doc(id).update({active: e});
-      this.notifyVue(`Banner status is ${e ? 'active' : 'inactive'}`);
+    updateStatus(e, type, id){
+      if (type=='active') {
+        firebaseDB.collection('banners').doc(id).update({active: e});
+        this.notifyVue(`Banner status is ${e ? 'active' : 'inactive'}`);
+      } else if (type=='published') {
+        firebaseDB.collection('banners').doc(id).update({published: e});
+        this.notifyVue(`Banner is ${e ? 'published' : 'not published'}`);
+      }
     },
     closeMdal() {
       this.showDialog = false;
@@ -171,6 +168,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  .activeBtn, .md-button.md-success:focus {
+    background-color: rgb(26, 87, 41)!important;
+  }
+  .md-button.md-success:hover, .md-button.md-success:active{
+    background-color: rgb(22, 119, 46)!important;
+  }
   .md-switch {
     display: flex;
   }

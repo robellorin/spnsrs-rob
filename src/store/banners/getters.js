@@ -1,7 +1,11 @@
 export function getBanners(state) {
-    return state.banners;
+  return state.banners;
 }
 
-export function getEditableBanner(state){
-    return state.editableBanner
+export function getSharedBanners(state) {
+  return state.sharedBanners;
+}
+
+export function getEditableBanner(state) {
+  return state.editableBanner;
 }
