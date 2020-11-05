@@ -322,27 +322,6 @@ export default {
     },
     handleDelete(item) {
       this.deleteRow(item);
-      // Swal.fire({
-      //   title: "Are you sure?",
-      //   text: `You won't be able to revert this!`,
-      //   type: "warning",
-      //   showCancelButton: true,
-      //   confirmButtonClass: "md-button md-success btn-fill",
-      //   cancelButtonClass: "md-button md-danger btn-fill",
-      //   confirmButtonText: "Yes, delete it!",
-      //   buttonsStyling: false
-      // }).then(result => {
-      //   if (result.value) {
-      //     this.deleteRow(item);
-      //     Swal.fire({
-      //       title: "Deleted!",
-      //       text: `You deleted ${item.name}`,
-      //       type: "success",
-      //       confirmButtonClass: "md-button md-success btn-fill",
-      //       buttonsStyling: false
-      //     });
-      //   }
-      // });
     },
     async deleteRow(item) {
       let removeDocId = await this.$firebaseGlobDB
