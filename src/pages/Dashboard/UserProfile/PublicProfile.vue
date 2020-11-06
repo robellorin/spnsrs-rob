@@ -6,8 +6,8 @@
             :class="getClass(headerColor)"
           >
             <div class="md-card-banner">
-              <div v-if="publicuser.banner">
-                <img :src="publicuser.banner" alt="banner image" />
+              <div v-if="userInfo.banner">
+                <img :src="userInfo.banner" alt="banner image" />
               </div>
               <div v-else>
                 <img
@@ -18,8 +18,8 @@
             </div>
             <div class="md-card-avatar">
               <div class="picture">
-                <div v-if="publicuser.image">
-                  <img :src="publicuser.image" />
+                <div v-if="userInfo.image">
+                  <img :src="userInfo.image" />
                 </div>
                 <div v-else>
                   <img :src="avatar" title="" />
@@ -27,19 +27,19 @@
               </div>
             </div>
             <h3 class="title">
-              {{publicuser.firstname + ' ' + publicuser.lastname + `(@${publicuser.username})`}}
+              {{userInfo.firstname}} {{userInfo.lastname}} ({{userInfo.username}})
             </h3>
             <p class="description">
-              {{publicuser.description}}
+              {{userInfo.description}}
             </p>
             <div class="social-buttons">
-              <md-button class="md-round md-just-icon md-facebook" @click="gotoUrl(publicuser.facebook)" v-show="publicuser.facebook && publicuser.facebook!=''">
+              <md-button class="md-round md-just-icon md-facebook" @click="gotoUrl(userInfo.facebook)" v-show="userInfo.facebook && userInfo.facebook!=''">
                 <i class="fab fa-facebook"></i>
               </md-button>
-              <md-button class="md-round md-just-icon md-twitter" @click="gotoUrl(publicuser.twitter)" v-show="publicuser.twitter && publicuser.twitter!=''">
+              <md-button class="md-round md-just-icon md-twitter" @click="gotoUrl(userInfo.twitter)" v-show="userInfo.twitter && userInfo.twitter!=''">
                 <i class="fab fa-twitter"></i>
               </md-button>
-              <md-button class="md-round md-just-icon md-instagram" @click="gotoUrl(publicuser.instagram)" v-show="publicuser.instagram && publicuser.instagram!=''">
+              <md-button class="md-round md-just-icon md-instagram" @click="gotoUrl(userInfo.instagram)" v-show="userInfo.instagram && userInfo.instagram!=''">
                 <i class="fab fa-instagram"></i>
               </md-button>
             </div>
@@ -84,6 +84,7 @@
   </ValidationObserver>
 </template>
 <script>
+import axios from "@/api/axios";
 import { mapGetters } from "vuex";
 import { ProductCard } from "@/components";
 import { extend } from "vee-validate";
@@ -107,10 +108,10 @@ export default {
       type: String,
       default: "",
     },
-    // publicuser: {
-    //   type: Object,
-    //   default: {},
-    // },
+    username: {
+      type: String,
+      default: "username4",
+    },
   },
   computed: {
     sortedBanners: function() {
@@ -139,56 +140,57 @@ export default {
   },
   data() {
     return {
-      publicuser: {},
+      userInfo: {},
       banners: [],
       sharedBanners: [],
     };
   },
-  async created() {
-    this.publicuser = { ...this.authUser };
-    let banners = await firebaseDB
-      .collection("banners")
-      .where("userId", "==", this.authUser.id)
-      .where("active", "==", true)
-      .get()
-      .then((querySnapshot) => {
-        let updatedBanners = [];
-        querySnapshot.forEach((doc) => {
-          updatedBanners.push({ id: doc.id, ...doc.data() });
-        });
-        return updatedBanners;
-      });
-
-    let sharedBanners = await firebaseDB
-      .collection("shares")
-      .where("influencerId", "==", this.authUser.id)
-      .get()
-      .then(async (snapshot1) => {
-        let bannerIdList = [];
-        snapshot1.forEach((doc) => {
-          bannerIdList.push(doc.data().bannerId);
-        });
-        let sharedBannersList = [];
-        if (bannerIdList.length==0) {
-          return sharedBannersList;
+  watch: {
+    '$route.params.username': function(val) {
+      let username = val
+      axios
+      .get(`/profile/${username}`)
+      .then(response => {
+        let data = response.data
+        if (data) {
+          this.banners = data.banners;
+          this.sharedBanners = data.sharedBanners;
+          this.userInfo = data.userInfo;
         }
-        sharedBannersList = await firebaseDB
-        .collection("banners")
-        .where("id", "in", bannerIdList)
-        .where("published", "==", true)
-        .get()
-        .then((snapshot2) => {
-          let internalBanners = [];
-          snapshot2.forEach((doc) => {
-            internalBanners.push({ id: doc.id, ...doc.data() });
-          });
-          return internalBanners;
-        });
-        return sharedBannersList;
+      })
+      .catch(err => {
+        console.log(err)
       });
-
-      this.banners = banners;
-      this.sharedBanners = sharedBanners
+    }
+  },
+  created() {
+    console.log(this.$route.name);
+    let routeName = this.$route.name
+    let username = null;
+    if (routeName === "PublicUserProfile") {
+      username = this.authUser.username
+    } else {
+      username = this.$route.params.username
+    }
+    if (username) {
+      axios
+      .get(`/profile/${username}`)
+      .then(response => {
+        let data = response.data
+        if (!data.err && data) {
+          this.banners = data.banners;
+          this.sharedBanners = data.sharedBanners;
+          this.userInfo = data.userInfo;
+        } else {
+          this.banners = [];
+          this.sharedBanners = [];
+          this.userInfo = {};
+        }
+      })
+      .catch(err => {
+        console.log(err)
+      });
+    }
   },
   methods: {
     getClass: function(headerColor) {

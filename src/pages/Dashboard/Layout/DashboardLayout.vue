@@ -14,7 +14,7 @@
         >
         </sidebar-item>
         <sidebar-item
-            :link="{ name: 'Public profile', icon: 'image', path: '/profile/publicprofile' }"
+            :link="{ name: 'My Profile', icon: 'image', path: '/profile/myprofile' }"
         ></sidebar-item>
         <!-- <sidebar-item
             :link="{ name: 'Buttons', path: '/components/buttons' }"

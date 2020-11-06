@@ -3,12 +3,13 @@
   "version": "1.4.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve  --port 8088 --open",
+    "serve": "vue-cli-service serve --port 8088 --open",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "dev": "npm run serve",
-    "deploy": "npm run build && cd docs && npm run build && cd .. && sudo gh-pages -d dist",
-    "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && npm install && npm run dev"
+    "dev": "yarn run serve --mode development",
+    "start": "yarn run dev",
+    "deploy": "yarn run build && cd docs && yarn run build && cd .. && sudo gh-pages -d dist",
+    "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && yarn install && yarn run dev"
   },
   "dependencies": {
     "@fullcalendar/core": "4.4.0",
@@ -17,8 +18,10 @@
     "@fullcalendar/timegrid": "^4.4.0",
     "@fullcalendar/vue": "4.4.0",
     "@tweenjs/tween.js": "18.5.0",
+    "axios": "^0.21.0",
     "chartist": "0.11.4",
     "es6-promise": "^4.2.8",
+    "express": "^4.17.1",
     "firebase": "^7.24.0",
     "fuse.js": "3.6.1",
     "google-maps": "4.2.3",

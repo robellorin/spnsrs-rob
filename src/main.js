@@ -51,6 +51,10 @@ if (localStorage.getItem("isLoggedIn") === "true") {
 }
 
 router.beforeEach((to, from, next) => {
+  if (to.name === "publicuser") {
+    next();
+    return;
+  }
   if (localStorage.getItem("isLoggedIn") === "true") {
     if (to.name === "Login" || to.name == "Register") {
       if (store.getters["auth/getAuthUser"].profilecompleted === true) {

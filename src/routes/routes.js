@@ -200,7 +200,7 @@ let profileMenu = {
       components: { default: User }
     },
     {
-      path: "publicprofile",
+      path: "myprofile",
       name: "PublicUserProfile",
       components: { default: PublicUser }
     },
@@ -236,6 +236,11 @@ let authPages = {
       path: "/lock",
       name: "Lock",
       component: Lock
+    },
+    {
+      path: "/public/:username",
+      name: "publicuser",
+      component: PublicUser
     }
   ]
 };
